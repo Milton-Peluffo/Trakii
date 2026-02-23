@@ -34,9 +34,7 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     settingsViewModel: SettingsViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit,
-    onNavigateToLogin: () -> Unit,
-    onNavigateToAccountInfo: () -> Unit,
-    onNavigateToAccountPassword: () -> Unit
+    onNavigateToLogin: () -> Unit
 ) {
 
     val uiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
@@ -47,12 +45,6 @@ fun SettingsScreen(
             when (event) {
                 is SettingsUiEvent.NavigateToLogin ->
                     onNavigateToLogin()
-
-                is SettingsUiEvent.NavigateToAccountInfo ->
-                    onNavigateToAccountInfo
-
-                is SettingsUiEvent.NavigateToAccountPassword ->
-                    onNavigateToAccountPassword
             }
         }
     }
@@ -96,13 +88,13 @@ fun SettingsScreen(
                         leadingIcon = com.tomildev.room_login_compose.R.drawable.ic_person,
                         text = "Profile details",
                         contentDescription = "Profile details",
-                        onClick = { settingsViewModel.onAccountInfoClick() }
+                        onClick = {}
                     )
                     SettingsNavigationItem(
                         leadingIcon = com.tomildev.room_login_compose.R.drawable.ic_lock,
                         text = "Password",
                         contentDescription = "Password",
-                        onClick = { settingsViewModel.onAccountPasswordClick() }
+                        onClick = {}
                     )
                     SettingsToggleItem(
                         leadingIcon = com.tomildev.room_login_compose.R.drawable.ic_moon,
