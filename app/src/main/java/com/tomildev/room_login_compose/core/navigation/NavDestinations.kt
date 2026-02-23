@@ -15,10 +15,4 @@ sealed interface NavRoute {
 
     @Serializable
     data object Settings : NavRoute
-
-    @Serializable
-    data object AccountInfo : NavRoute
-
-    @Serializable
-    data object AccountPassword : NavRoute
 }
