@@ -72,6 +72,11 @@ dependencies {
     //DATASTORE
     implementation(libs.androidx.datastore.preferences)
 
+    //RETROFIT
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.kotlin.serialization)
+    implementation(libs.okhttp.logging)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
