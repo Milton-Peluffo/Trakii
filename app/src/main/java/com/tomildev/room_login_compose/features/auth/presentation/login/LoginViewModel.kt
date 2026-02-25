@@ -64,7 +64,7 @@ class LoginViewModel @Inject constructor(
             result.onSuccess { user ->
                 if (user != null && user.password == _uiState.value.password) {
                     delay(2500)
-                    userRepository.saveUserSession(user.uid)
+                    userRepository.saveUserSession(user.id)
                     _uiState.update { it.copy(isLoginSuccess = true) }
 
                 } else {

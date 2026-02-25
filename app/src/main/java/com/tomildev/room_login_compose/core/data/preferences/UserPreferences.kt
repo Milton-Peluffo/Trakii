@@ -11,7 +11,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -24,20 +23,20 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class UserPreferences @Inject constructor(@ApplicationContext private val context: Context) {
 
     private object PreferencesKeys {
-        val USER_UID = stringPreferencesKey("user_uid")
+        val USER_ID = intPreferencesKey("user_id")
         val DARK_MODE = booleanPreferencesKey("dark_mode")
     }
 
     //-------- SESSION --------
-    val userUid: Flow<String?> = context.dataStore.data
+    val userId: Flow<Int> = context.dataStore.data
         .handleErrors()
         .map { preferences ->
-            preferences[PreferencesKeys.USER_UID]
+            preferences[PreferencesKeys.USER_ID] ?: -1
         }
 
-    suspend fun saveSession(userUid: String) {
+    suspend fun saveSession(userId: Int) {
         context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.USER_UID] = userUid
+            preferences[PreferencesKeys.USER_ID] = userId
         }
     }
 
