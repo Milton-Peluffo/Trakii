@@ -7,6 +7,7 @@ import com.tomildev.room_login_compose.core.data.local.db.AppDatabase
 import com.tomildev.room_login_compose.core.data.repository.UserRepositoryImpl
 import com.tomildev.room_login_compose.core.data.preferences.UserPreferences
 import com.tomildev.room_login_compose.core.domain.repository.UserRepository
+import com.tomildev.room_login_compose.features.auth.data.remote.service.AuthService
 import com.tomildev.room_login_compose.features.auth.data.repository.AuthRepositoryImpl
 import com.tomildev.room_login_compose.features.auth.domain.repository.AuthRepository
 import dagger.Module
@@ -36,8 +37,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(userDao: UserDao): AuthRepository {
-        return AuthRepositoryImpl(userDao)
+    fun provideAuthRepository(userDao: UserDao, authService: AuthService): AuthRepository {
+        return AuthRepositoryImpl(userDao, authService)
     }
 
     @Provides
