@@ -9,9 +9,10 @@ import com.tomildev.room_login_compose.core.domain.model.user.UserValidationErro
 fun UserValidationError.asString(): String {
     return when (this) {
         is UserValidationError.EmptyField -> stringResource(R.string.error_empty_field)
-        is UserValidationError.TooShort -> stringResource(R.string.error_password_too_short)
-        is UserValidationError.InvalidFormat -> {
-            stringResource(R.string.error_email_invalid)
-        }
+        is UserValidationError.TooShortName -> stringResource(R.string.error_user_name_too_short)
+        is UserValidationError.InvalidName -> stringResource(R.string.error_user_name_invalid)
+        is UserValidationError.InvalidEmail -> stringResource(R.string.error_email_invalid)
+        is UserValidationError.InvalidPassword -> stringResource(R.string.error_email_invalid)
+        is UserValidationError.TooShortPassword -> stringResource(R.string.error_password_too_short)
     }
 }

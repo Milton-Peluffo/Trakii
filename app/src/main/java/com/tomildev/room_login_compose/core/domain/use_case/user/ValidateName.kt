@@ -8,7 +8,7 @@ class ValidateName @Inject constructor() {
 
     val usernameRegex = Regex("^[A-Za-z0-9_]+$")
 
-    fun execute(name: String) : UserValidationResult {
+    fun execute(name: String): UserValidationResult {
         if (!usernameRegex.matches(name)) {
             UserValidationResult.Error(
                 error = UserValidationError.InvalidName
@@ -17,7 +17,7 @@ class ValidateName @Inject constructor() {
 
         if (name.length <= 3) {
             UserValidationResult.Error(
-                error = UserValidationError.TooShort
+                error = UserValidationError.TooShortName
             )
         }
 

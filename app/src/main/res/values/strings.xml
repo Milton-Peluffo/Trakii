@@ -3,9 +3,12 @@
 
     <!-- COMMON -->
     <string name="error_empty_field">This field cannot be empty</string>
+    <string name="error_user_name_too_short"> Username must have 3 characters at least </string>
+    <string name="error_user_name_invalid"> Username must have only letters, numbers and underscores </string>
     <string name="error_email_invalid">Invalid email format</string>
     <string name="error_password_too_short">Password must have 8 characters at least</string>
     <string name="error_password_format">Password needs uppercase, lowercase and a special character</string>
+    <string name="error_confirm_password_match"> Passwords should match </string>
 
     <!-- REGISTER SCREEN -->
     <string name="register_title">HEY THERE!</string>

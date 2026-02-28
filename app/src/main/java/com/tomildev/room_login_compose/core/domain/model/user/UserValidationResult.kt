@@ -7,7 +7,8 @@ sealed class UserValidationResult {
 
 sealed class UserValidationError {
     object EmptyField : UserValidationError()
-    object TooShort : UserValidationError()
+    object TooShortPassword : UserValidationError()
+    object TooShortName : UserValidationError()
     object InvalidName : UserValidationError()
     object InvalidEmail : UserValidationError()
     object InvalidPassword : UserValidationError()

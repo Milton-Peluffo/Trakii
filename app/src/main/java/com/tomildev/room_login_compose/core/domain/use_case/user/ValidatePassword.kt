@@ -18,7 +18,7 @@ class ValidatePassword @Inject constructor() {
 
         if (password.length < 8) {
             return UserValidationResult.Error(
-                error = UserValidationError.TooShort
+                error = UserValidationError.TooShortPassword
             )
         }
 
