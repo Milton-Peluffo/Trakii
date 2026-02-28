@@ -1,14 +1,14 @@
 package com.tomildev.room_login_compose.core.domain.model.user
 
-sealed class ValidationResult {
-    object Success : ValidationResult()
-    data class Error(val error: ValidationError) : ValidationResult()
+sealed class UserValidationResult {
+    object Success : UserValidationResult()
+    data class Error(val error: UserValidationError) : UserValidationResult()
 }
 
-sealed class ValidationError {
-    object EmptyField : ValidationError()
-    object TooShort : ValidationError()
-    object InvalidName : ValidationError()
-    object InvalidEmail : ValidationError()
-    object InvalidPassword : ValidationError()
+sealed class UserValidationError {
+    object EmptyField : UserValidationError()
+    object TooShort : UserValidationError()
+    object InvalidName : UserValidationError()
+    object InvalidEmail : UserValidationError()
+    object InvalidPassword : UserValidationError()
 }

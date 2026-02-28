@@ -3,8 +3,8 @@ package com.tomildev.room_login_compose.features.auth.register.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomildev.room_login_compose.core.domain.model.user.User
-import com.tomildev.room_login_compose.core.domain.model.user.ValidationError
-import com.tomildev.room_login_compose.core.domain.model.user.ValidationResult
+import com.tomildev.room_login_compose.core.domain.model.user.UserValidationError
+import com.tomildev.room_login_compose.core.domain.model.user.UserValidationResult
 import com.tomildev.room_login_compose.core.domain.use_case.user.UserUseCases
 import com.tomildev.room_login_compose.features.auth.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,11 +30,11 @@ class RegisterViewmodel @Inject constructor(
             userUseCases.validatePassword.execute(password = _uiState.value.password)
 
         when (passwordResult) {
-            is ValidationResult.Success -> {
+            is UserValidationResult.Success -> {
                 registerUser()
             }
 
-            is ValidationResult.Error -> {
+            is UserValidationResult.Error -> {
                 _uiState.update {
                     it.copy(
                         passwordError = passwordResult.error,
@@ -139,7 +139,7 @@ data class RegisterUiState(
     val isNameError: Boolean = false,
     val isEmailError: Boolean = false,
     val isPasswordError: Boolean = false,
-    val passwordError: ValidationError? = null,
+    val passwordError: UserValidationError? = null,
     val isPasswordConfirmError: Boolean = false,
     val isTermsAndConditionsError: Boolean = false,
 )
