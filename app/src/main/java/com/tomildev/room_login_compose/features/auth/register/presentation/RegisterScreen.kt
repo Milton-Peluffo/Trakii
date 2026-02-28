@@ -1,4 +1,4 @@
-package com.tomildev.room_login_compose.features.auth.presentation.login
+package com.tomildev.room_login_compose.features.auth.register.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,26 +16,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.tomildev.room_login_compose.core.presentation.components.OutlinedPrimaryButton
 import com.tomildev.room_login_compose.core.presentation.components.PrimaryButton
 import com.tomildev.room_login_compose.core.presentation.components.PrimarySubtitle
 import com.tomildev.room_login_compose.core.presentation.components.PrimaryTextField
 import com.tomildev.room_login_compose.core.presentation.components.PrimaryTitle
 import com.tomildev.room_login_compose.core.presentation.components.TextError
+import com.tomildev.room_login_compose.features.auth.presentation.components.AuthCheckBox
 import com.tomildev.room_login_compose.features.auth.presentation.components.AuthTextAction
 
 @Composable
-fun LoginScreen(
+fun RegisterScreen(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = hiltViewModel(),
-    onNavigateToRegister: () -> Unit,
+    registerViewmodel: RegisterViewmodel = hiltViewModel(),
+    onNavigateToLogin: () -> Unit,
     onNavigateToHome: (String) -> Unit
 ) {
 
-    val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by registerViewmodel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState.isLoginSuccess) {
-        if (uiState.isLoginSuccess) {
+    LaunchedEffect(uiState.isRegistrationSuccess) {
+        if (uiState.isRegistrationSuccess) {
             onNavigateToHome(uiState.email)
         }
     }
@@ -51,46 +51,64 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PrimaryTitle(
-                title = "WELCOME BACK!",
-                subtitle = "Log in to continue"
+                title = "HEY THERE!",
+                subtitle = "Create your account"
             )
-            PrimarySubtitle(text = "Email")
+            PrimarySubtitle(text = "Fill fields below to get started")
+            PrimaryTextField(
+                modifier = Modifier,
+                value = uiState.name,
+                onValueChange = { registerViewmodel.onNameChange(name = it) },
+                label = "Name",
+                isError = uiState.isNameError
+            )
+            Spacer(Modifier.height(5.dp))
             PrimaryTextField(
                 modifier = Modifier,
                 value = uiState.email,
-                onValueChange = { loginViewModel.onEmailChange(email = it) },
+                onValueChange = { registerViewmodel.onEmailChange(email = it) },
                 label = "Email",
                 isError = uiState.isEmailError
             )
             Spacer(Modifier.height(5.dp))
-            PrimarySubtitle(text = "Password")
             PrimaryTextField(
                 modifier = Modifier,
                 value = uiState.password,
-                onValueChange = { loginViewModel.onPasswordChange(password = it) },
+                onValueChange = { registerViewmodel.onPasswordChange(password = it) },
                 label = "Password",
                 isError = uiState.isPasswordError,
                 isPasswordField = true
             )
-            Spacer(Modifier.height(10.dp))
-            AuthTextAction(
-                text = "Forget Password?",
-                onClick = { },
-                textAlign = TextAlign.End
+            Spacer(Modifier.height(5.dp))
+            PrimaryTextField(
+                modifier = Modifier,
+                value = uiState.confirmPassword,
+                onValueChange = { registerViewmodel.onConfirmPasswordChange(confirmPassword = it) },
+                label = "Confirm password",
+                isError = uiState.isPasswordConfirmError,
+                isPasswordField = true
+            )
+            Spacer(Modifier.height(5.dp))
+            AuthCheckBox(
+                checked = uiState.isCheckBoxChecked,
+                onCheckedChange = { registerViewmodel.onCheckedChange(isCheckBoxChecked = it) },
+                text = "I agree to Terms and Privacy Policy "
             )
             uiState.errorMessage?.let { error ->
                 TextError(text = error)
             }
-            Spacer(Modifier.height(30.dp))
+            Spacer(Modifier.height(25.dp))
             PrimaryButton(
-                text = "Login",
+                text = "Sign Up",
                 isLoading = uiState.isLoading,
-                onClick = { loginViewModel.onLoginClick() }
+                onClick = { registerViewmodel.onRegisterClick() }
             )
-            Spacer(Modifier.height(15.dp))
-            OutlinedPrimaryButton(
-                text = "Create an account",
-                onClick = { onNavigateToRegister() })
+            Spacer(Modifier.height(20.dp))
+            AuthTextAction(
+                text = "Already Have Account? Log In",
+                onClick = { onNavigateToLogin() },
+                textAlign = TextAlign.Center
+            )
         }
     }
 }

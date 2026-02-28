@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">room_login_compose</string>
+    <string name="app_name">Room Login Compose</string>
+
+    <!-- COMMON -->
+    <string name="error_empty_field">This field cannot be empty</string>
+    <string name="error_email_invalid">Invalid email format</string>
+    <string name="error_password_too_short">Password must have 8 characters at least</string>
+    <string name="error_password_format">Password needs uppercase, lowercase and a special character</string>
+
+    <!-- REGISTER SCREEN -->
+    <string name="register_title">HEY THERE!</string>
+    <string name="register_subtitle">Create your account</string>
+    <string name="register_label_name">Name</string>
+    <string name="register_label_password">Password</string>
+    <string name="register_btn_signup">Sign Up</string>
 </resources>

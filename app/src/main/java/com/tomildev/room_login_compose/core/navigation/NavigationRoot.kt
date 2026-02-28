@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.tomildev.room_login_compose.features.auth.presentation.login.LoginScreen
-import com.tomildev.room_login_compose.features.auth.presentation.register.RegisterScreen
+import com.tomildev.room_login_compose.features.auth.login.presentation.LoginScreen
+import com.tomildev.room_login_compose.features.auth.register.presentation.RegisterScreen
 import com.tomildev.room_login_compose.features.home.HomeScreen
 import com.tomildev.room_login_compose.features.settings.presentation.SettingsScreen
 

@@ -1,9 +1,11 @@
-package com.tomildev.room_login_compose.features.auth.presentation.register
+package com.tomildev.room_login_compose.features.auth.register.presentation
 
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomildev.room_login_compose.core.domain.model.User
+import com.tomildev.room_login_compose.core.domain.model.ValidationError
+import com.tomildev.room_login_compose.core.domain.model.ValidationResult
+import com.tomildev.room_login_compose.core.domain.use_case.user.UserUseCases
 import com.tomildev.room_login_compose.features.auth.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -15,77 +17,94 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RegisterViewmodel @Inject constructor(private val authRepository: AuthRepository) :
-    ViewModel() {
+class RegisterViewmodel @Inject constructor(
+    private val authRepository: AuthRepository,
+    private val userUseCases: UserUseCases
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
 
     fun onRegisterClick() {
-        if (validateFields()) {
-            registerUser()
-        }
-    }
+        val passwordResult =
+            userUseCases.validatePassword.execute(password = _uiState.value.password)
 
-    private fun validateFields(): Boolean {
-        return when {
-
-            !isNameLengthValid(name = _uiState.value.name) -> {
-                _uiState.update {
-                    it.copy(
-                        errorMessage = "Name must have 3 characters at least",
-                        isNameError = true
-                    )
-                }
-                false
+        when (passwordResult) {
+            is ValidationResult.Success -> {
+                registerUser()
             }
 
-            !isEmailValid(email = _uiState.value.email) -> {
+            is ValidationResult.Error -> {
                 _uiState.update {
                     it.copy(
-                        errorMessage = "Invalid email format",
-                        isEmailError = true
-                    )
-                }
-                false
-            }
-
-            !isPasswordLengthValid(password = _uiState.value.password) -> {
-                _uiState.update {
-                    it.copy(
-                        errorMessage = "Password must have 8 character at least",
+                        passwordError = passwordResult.error,
                         isPasswordError = true
                     )
                 }
-                false
             }
-
-            !isPasswordMatched(
-                password = _uiState.value.password,
-                confirmPassword = _uiState.value.confirmPassword
-            ) -> {
-                _uiState.update {
-                    it.copy(
-                        errorMessage = "Password should match",
-                        isPasswordConfirmError = true
-                    )
-                }
-                false
-            }
-
-            !_uiState.value.isCheckBoxChecked -> {
-                _uiState.update {
-                    it.copy(
-                        errorMessage = "You must accept the Terms and Conditions to continue",
-                        isTermsAndConditionsError = true
-                    )
-                }
-                false
-            }
-
-            else -> true
         }
+
     }
+
+//    private fun validateFields(): Boolean {
+//        return when {
+//
+//            !isNameLengthValid(name = _uiState.value.name) -> {
+//                _uiState.update {
+//                    it.copy(
+//                        errorMessage = "Name must have 3 characters at least",
+//                        isNameError = true
+//                    )
+//                }
+//                false
+//            }
+//
+//            !isEmailValid(email = _uiState.value.email) -> {
+//                _uiState.update {
+//                    it.copy(
+//                        errorMessage = "Invalid email format",
+//                        isEmailError = true
+//                    )
+//                }
+//                false
+//            }
+//
+//            !isPasswordLengthValid(password = _uiState.value.password) -> {
+//                _uiState.update {
+//                    it.copy(
+//                        errorMessage = "Password must have 8 character at least",
+//                        isPasswordError = true
+//                    )
+//                }
+//                false
+//            }
+//
+//            !isPasswordMatched(
+//                password = _uiState.value.password,
+//                confirmPassword = _uiState.value.confirmPassword
+//            ) -> {
+//                _uiState.update {
+//                    it.copy(
+//                        errorMessage = "Password should match",
+//                        isPasswordConfirmError = true
+//                    )
+//                }
+//                false
+//            }
+//
+//            !_uiState.value.isCheckBoxChecked -> {
+//                _uiState.update {
+//                    it.copy(
+//                        errorMessage = "You must accept the Terms and Conditions to continue",
+//                        isTermsAndConditionsError = true
+//                    )
+//                }
+//                false
+//            }
+//
+//            else -> true
+//        }
+//    }
 
     fun registerUser() {
         viewModelScope.launch {
@@ -156,21 +175,14 @@ class RegisterViewmodel @Inject constructor(private val authRepository: AuthRepo
         }
     }
 
-    private fun isEmailValid(email: String): Boolean =
-        Patterns.EMAIL_ADDRESS.matcher(email).matches()
+//    private fun isPasswordMatched(password: String, confirmPassword: String): Boolean =
+//        password == confirmPassword
 
-    private fun isPasswordMatched(password: String, confirmPassword: String): Boolean =
-        password == confirmPassword
-
-    private fun isPasswordLengthValid(password: String): Boolean = password.length >= 8
-    private fun isPhoneLengthValid(phone: String): Boolean = phone.length == 10
-    private fun isNameLengthValid(name: String): Boolean = name.length >= 3
 }
 
 data class RegisterUiState(
     //USER DATA
     val name: String = "",
-    val phone: String = "",
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",
@@ -182,9 +194,9 @@ data class RegisterUiState(
     //ERRORS
     val errorMessage: String? = null,
     val isNameError: Boolean = false,
-    val isPhoneError: Boolean = false,
     val isEmailError: Boolean = false,
     val isPasswordError: Boolean = false,
+    val passwordError: ValidationError? = null,
     val isPasswordConfirmError: Boolean = false,
     val isTermsAndConditionsError: Boolean = false,
 )
