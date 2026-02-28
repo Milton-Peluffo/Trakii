@@ -9,7 +9,7 @@ class ValidateConfirmPassword @Inject constructor() {
     fun execute(password: String, confirmPassword: String): UserValidationResult {
 
         if (confirmPassword.isBlank())
-            UserValidationResult.Error(
+            return UserValidationResult.Error(
                 error = UserValidationError.EmptyField
             )
 

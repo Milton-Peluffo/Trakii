@@ -12,8 +12,8 @@ fun UserValidationError.asString(): String {
         is UserValidationError.TooShortName -> stringResource(R.string.error_user_name_too_short)
         is UserValidationError.InvalidName -> stringResource(R.string.error_user_name_invalid)
         is UserValidationError.InvalidEmail -> stringResource(R.string.error_email_invalid)
-        is UserValidationError.InvalidPassword -> stringResource(R.string.error_email_invalid)
         is UserValidationError.TooShortPassword -> stringResource(R.string.error_password_too_short)
+        is UserValidationError.InvalidPassword -> stringResource(R.string.error_password_format)
         is UserValidationError.PasswordDoNotMatch -> stringResource(R.string.error_confirm_password_match)
     }
 }

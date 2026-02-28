@@ -11,18 +11,18 @@ class ValidateName @Inject constructor() {
         val usernameRegex = Regex("^[A-Za-z0-9_]+$")
 
         if (name.isBlank())
-            UserValidationResult.Error(
+            return UserValidationResult.Error(
                 error = UserValidationError.EmptyField
             )
 
         if (!usernameRegex.matches(name)) {
-            UserValidationResult.Error(
+            return UserValidationResult.Error(
                 error = UserValidationError.InvalidName
             )
         }
 
         if (name.length <= 3) {
-            UserValidationResult.Error(
+            return UserValidationResult.Error(
                 error = UserValidationError.TooShortName
             )
         }

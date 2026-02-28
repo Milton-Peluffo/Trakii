@@ -2,6 +2,7 @@ package com.tomildev.room_login_compose.features.auth.register.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomildev.room_login_compose.core.common.presentation.asString
 import com.tomildev.room_login_compose.core.domain.model.user.User
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationError
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationResult
@@ -26,27 +27,106 @@ class RegisterViewmodel @Inject constructor(
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
 
     fun onRegisterClick() {
+        if (validateFields()) {
+//            registerUser()
+        }
+    }
+
+    private fun validateFields(): Boolean {
+
+
+        val nameResult =
+            userUseCases.validateName.execute(name = _uiState.value.name)
+        val emailResult =
+            userUseCases.validateEmail.execute(email = _uiState.value.email)
         val passwordResult =
             userUseCases.validatePassword.execute(password = _uiState.value.password)
+        val passwordConfirmResult =
+            userUseCases.validateConfirmPassword.execute(
+                password = _uiState.value.password,
+                confirmPassword = _uiState.value.confirmPassword
+            )
+
+        when (nameResult) {
+            is UserValidationResult.Success -> {
+                _uiState.update {
+                    it.copy(
+                        isNameError = false
+                    )
+                }
+            }
+
+            is UserValidationResult.Error -> {
+                _uiState.update {
+                    it.copy(
+                        nameError = nameResult.error,
+                        isPasswordError = true
+
+                    )
+                }
+            }
+        }
+
+        when (emailResult) {
+            is UserValidationResult.Success -> {
+                _uiState.update {
+                    it.copy(
+                        isEmailError = false
+                    )
+                }
+            }
+
+            is UserValidationResult.Error -> {
+                _uiState.update {
+                    it.copy(
+                        emailError = emailResult.error,
+                        isPasswordError = true
+                    )
+                }
+            }
+        }
 
         when (passwordResult) {
             is UserValidationResult.Success -> {
-                registerUser()
+                _uiState.update {
+                    it.copy(
+                        isPasswordError = false,
+                    )
+                }
             }
 
             is UserValidationResult.Error -> {
                 _uiState.update {
                     it.copy(
                         passwordError = passwordResult.error,
-                        isPasswordError = true
+                        isPasswordError = true,
+                        errorMessage = UserValidationError.InvalidPassword.toString()
                     )
                 }
             }
         }
-    }
 
-    private fun validateFields(): Boolean {
+        when (passwordConfirmResult) {
+            is UserValidationResult.Success -> {
+                _uiState.update {
+                    it.copy(
+                        isPasswordError = false,
+                    )
+                }
+            }
 
+            is UserValidationResult.Error -> {
+                _uiState.update {
+                    it.copy(
+                        passwordError = passwordConfirmResult.error,
+                        isPasswordError = true,
+                        errorMessage = UserValidationError.InvalidPassword.toString()
+                    )
+                }
+            }
+        }
+
+        return true
     }
 
     fun registerUser() {
@@ -139,7 +219,10 @@ data class RegisterUiState(
     val isNameError: Boolean = false,
     val isEmailError: Boolean = false,
     val isPasswordError: Boolean = false,
+    val nameError: UserValidationError? = null,
+    val emailError: UserValidationError? = null,
     val passwordError: UserValidationError? = null,
+    val passwordConfirmError: UserValidationError? = null,
     val isPasswordConfirmError: Boolean = false,
     val isTermsAndConditionsError: Boolean = false,
 )
