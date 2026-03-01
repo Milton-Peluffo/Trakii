@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.tomildev.room_login_compose.core.common.presentation.asString
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryButton
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimarySubtitle
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryTextField
@@ -62,6 +63,9 @@ fun RegisterScreen(
                 label = "Name",
                 isError = uiState.isNameError
             )
+            if (uiState.isNameError){
+                TextError(text = uiState.nameError!!.asString())
+            }
             Spacer(Modifier.height(5.dp))
             PrimaryTextField(
                 modifier = Modifier,
@@ -70,6 +74,9 @@ fun RegisterScreen(
                 label = "Email",
                 isError = uiState.isEmailError
             )
+            if (uiState.isEmailError){
+                TextError(text = uiState.emailError!!.asString())
+            }
             Spacer(Modifier.height(5.dp))
             PrimaryTextField(
                 modifier = Modifier,
@@ -79,6 +86,9 @@ fun RegisterScreen(
                 isError = uiState.isPasswordError,
                 isPasswordField = true
             )
+            if (uiState.isPasswordError){
+                TextError(text = uiState.passwordError!!.asString())
+            }
             Spacer(Modifier.height(5.dp))
             PrimaryTextField(
                 modifier = Modifier,
@@ -88,14 +98,17 @@ fun RegisterScreen(
                 isError = uiState.isPasswordConfirmError,
                 isPasswordField = true
             )
+            if (uiState.isPasswordConfirmError){
+                TextError(text = uiState.passwordConfirmError!!.asString())
+            }
             Spacer(Modifier.height(5.dp))
             AuthCheckBox(
                 checked = uiState.isCheckBoxChecked,
                 onCheckedChange = { registerViewmodel.onCheckedChange(isCheckBoxChecked = it) },
                 text = "I agree to Terms and Privacy Policy "
             )
-            uiState.errorMessage?.let { error ->
-                TextError(text = error)
+            if (uiState.isTermsAndConditionsError){
+                TextError(text = uiState.passwordConfirmError!!.asString())
             }
             Spacer(Modifier.height(25.dp))
             PrimaryButton(

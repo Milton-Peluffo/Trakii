@@ -47,86 +47,27 @@ class RegisterViewmodel @Inject constructor(
                 confirmPassword = _uiState.value.confirmPassword
             )
 
-        when (nameResult) {
-            is UserValidationResult.Success -> {
-                _uiState.update {
-                    it.copy(
-                        isNameError = false
-                    )
-                }
-            }
+        val hasError = listOf(
+            nameResult,
+            emailResult,
+            passwordResult,
+            passwordConfirmResult
+        ).any { it is UserValidationResult.Error }
 
-            is UserValidationResult.Error -> {
-                _uiState.update {
-                    it.copy(
-                        nameError = nameResult.error,
-                        isPasswordError = true
+        _uiState.update {
+            it.copy(
+                nameError = if (nameResult is UserValidationResult.Error) nameResult.error else null,
+                emailError = if (emailResult is UserValidationResult.Error) emailResult.error else null,
+                passwordError = if (passwordResult is UserValidationResult.Error) passwordResult.error else null,
+                passwordConfirmError = if (passwordConfirmResult is UserValidationResult.Error) passwordConfirmResult.error else null,
 
-                    )
-                }
-            }
+                isNameError = nameResult is UserValidationResult.Error,
+                isEmailError = emailResult is UserValidationResult.Error,
+                isPasswordError = passwordResult is UserValidationResult.Error,
+                isPasswordConfirmError = passwordConfirmResult is UserValidationResult.Error,
+                )
         }
-
-        when (emailResult) {
-            is UserValidationResult.Success -> {
-                _uiState.update {
-                    it.copy(
-                        isEmailError = false
-                    )
-                }
-            }
-
-            is UserValidationResult.Error -> {
-                _uiState.update {
-                    it.copy(
-                        emailError = emailResult.error,
-                        isPasswordError = true
-                    )
-                }
-            }
-        }
-
-        when (passwordResult) {
-            is UserValidationResult.Success -> {
-                _uiState.update {
-                    it.copy(
-                        isPasswordError = false,
-                    )
-                }
-            }
-
-            is UserValidationResult.Error -> {
-                _uiState.update {
-                    it.copy(
-                        passwordError = passwordResult.error,
-                        isPasswordError = true,
-                        errorMessage = UserValidationError.InvalidPassword.toString()
-                    )
-                }
-            }
-        }
-
-        when (passwordConfirmResult) {
-            is UserValidationResult.Success -> {
-                _uiState.update {
-                    it.copy(
-                        isPasswordError = false,
-                    )
-                }
-            }
-
-            is UserValidationResult.Error -> {
-                _uiState.update {
-                    it.copy(
-                        passwordError = passwordConfirmResult.error,
-                        isPasswordError = true,
-                        errorMessage = UserValidationError.InvalidPassword.toString()
-                    )
-                }
-            }
-        }
-
-        return true
+        return !hasError && _uiState.value.isCheckBoxChecked
     }
 
     fun registerUser() {
@@ -197,10 +138,6 @@ class RegisterViewmodel @Inject constructor(
             )
         }
     }
-
-//    private fun isPasswordMatched(password: String, confirmPassword: String): Boolean =
-//        password == confirmPassword
-
 }
 
 data class RegisterUiState(
