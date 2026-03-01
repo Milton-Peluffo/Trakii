@@ -38,43 +38,58 @@ class RegisterViewmodel @Inject constructor(
 //            registerUser()
         }
     }
-
     private fun validateFields(): Boolean {
+        val state = _uiState.value
 
+        val nameResult = userUseCases.validateName.execute(name = state.name)
+        if (nameResult is UserValidationResult.Error) {
+            updateErrorState(nameError = nameResult.error)
+            return false
+        }
 
-        val nameResult =
-            userUseCases.validateName.execute(name = _uiState.value.name)
-        val emailResult =
-            userUseCases.validateEmail.execute(email = _uiState.value.email)
-        val passwordResult =
-            userUseCases.validatePassword.execute(password = _uiState.value.password)
-        val passwordConfirmResult =
-            userUseCases.validateConfirmPassword.execute(
-                password = _uiState.value.password,
-                confirmPassword = _uiState.value.confirmPassword
-            )
+        val emailResult = userUseCases.validateEmail.execute(email = state.email)
+        if (emailResult is UserValidationResult.Error) {
+            updateErrorState(emailError = emailResult.error)
+            return false
+        }
 
-        val hasError = listOf(
-            nameResult,
-            emailResult,
-            passwordResult,
-            passwordConfirmResult
-        ).any { it is UserValidationResult.Error }
+        val passwordResult = userUseCases.validatePassword.execute(password = state.password)
+        if (passwordResult is UserValidationResult.Error) {
+            updateErrorState(passwordError = passwordResult.error)
+            return false
+        }
 
+        val passwordConfirmResult = userUseCases.validateConfirmPassword.execute(
+            password = state.password,
+            confirmPassword = state.confirmPassword
+        )
+        if (passwordConfirmResult is UserValidationResult.Error) {
+            updateErrorState(passwordConfirmError = passwordConfirmResult.error)
+            return false
+        }
+        updateErrorState()
+        return true
+    }
+
+    private fun updateErrorState(
+        nameError: UserValidationError? = null,
+        emailError: UserValidationError? = null,
+        passwordError: UserValidationError? = null,
+        passwordConfirmError: UserValidationError? = null
+    ) {
         _uiState.update {
             it.copy(
-                nameError = if (nameResult is UserValidationResult.Error) nameResult.error else null,
-                emailError = if (emailResult is UserValidationResult.Error) emailResult.error else null,
-                passwordError = if (passwordResult is UserValidationResult.Error) passwordResult.error else null,
-                passwordConfirmError = if (passwordConfirmResult is UserValidationResult.Error) passwordConfirmResult.error else null,
+                nameError = nameError,
+                emailError = emailError,
+                passwordError = passwordError,
+                passwordConfirmError = passwordConfirmError,
 
-                isNameError = nameResult is UserValidationResult.Error,
-                isEmailError = emailResult is UserValidationResult.Error,
-                isPasswordError = passwordResult is UserValidationResult.Error,
-                isPasswordConfirmError = passwordConfirmResult is UserValidationResult.Error,
+                isNameError = nameError != null,
+                isEmailError = emailError != null,
+                isPasswordError = passwordError != null,
+                isPasswordConfirmError = passwordConfirmError != null
             )
         }
-        return !hasError
     }
 
     fun registerUser() {

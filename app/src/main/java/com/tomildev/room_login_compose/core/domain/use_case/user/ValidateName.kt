@@ -21,7 +21,7 @@ class ValidateName @Inject constructor() {
             )
         }
 
-        if (name.length <= 3) {
+        if (name.length < 3) {
             return UserValidationResult.Error(
                 error = UserValidationError.TooShortName
             )
