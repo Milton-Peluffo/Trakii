@@ -8,7 +8,9 @@ class ValidateEmail @Inject constructor() {
 
     fun execute(email: String): UserValidationResult {
 
-        val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
+        val emailRegex = Regex(
+            "^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z]{2,})+$"
+        )
 
         if (email.isBlank())
             return UserValidationResult.Error(
