@@ -11,17 +11,27 @@ class ValidateNameTest {
     val validateName = ValidateName()
 
     @Test
-    fun `Name with special symbols returns error`(){
+    fun `Empty name returns empty field error`(){
 
-        val name = "user-?@"
+        val name = ""
         val result = validateName.execute(name)
 
         assert(result is UserValidationResult.Error)
-        assertEquals(UserValidationError.InvalidName, (result as UserValidationResult.Error).error)
+        assertEquals(UserValidationError.EmptyField, (result as UserValidationResult.Error).error)
     }
 
     @Test
-    fun `Name with spaces returns error`(){
+    fun `Name with only spaces returns empty field error`(){
+
+        val name = "   "
+        val result = validateName.execute(name)
+
+        assert(result is UserValidationResult.Error)
+        assertEquals(UserValidationError.EmptyField, (result as UserValidationResult.Error).error)
+    }
+
+    @Test
+    fun `Name with spaces returns invalid name error`(){
 
         val name = " User "
         val result = validateName.execute(name)
@@ -31,7 +41,17 @@ class ValidateNameTest {
     }
 
     @Test
-    fun `Name with fewer than 3 characters returns error`(){
+    fun `Name with special symbols returns invalid name error`(){
+
+        val name = "user-?@"
+        val result = validateName.execute(name)
+
+        assert(result is UserValidationResult.Error)
+        assertEquals(UserValidationError.InvalidName, (result as UserValidationResult.Error).error)
+    }
+
+    @Test
+    fun `Name with fewer than 3 characters returns too short name error`(){
 
         val name = "Us"
         val result = validateName.execute(name)
