@@ -6,6 +6,14 @@ import com.tomildev.room_login_compose.core.domain.use_case.user.ValidateName
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
+/**
+ * Unit tests for the [ValidateName] use case.
+ *
+ * This class verifies the name validation logic, ensuring that appropriate
+ * [UserValidationResult]s and [UserValidationError]s are returned for various
+ * scenarios such as empty inputs, names with invalid characters or spaces,
+ * names that are too short, and successful validations.
+ */
 class ValidateNameTest {
 
     val validateName = ValidateName()

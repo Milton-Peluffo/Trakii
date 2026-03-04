@@ -3,8 +3,17 @@ package com.tomildev.room_login_compose.user
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationError
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationResult
 import com.tomildev.room_login_compose.core.domain.use_case.user.ValidateConfirmPassword
-import junit.framework.TestCase.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
+
+/**
+ * Unit tests for the [ValidateConfirmPassword] use case.
+ *
+ * This class verifies the logic for comparing a password with its confirmation field,
+ * ensuring that appropriate [UserValidationResult]s and [UserValidationError]s are
+ * returned for various scenarios such as empty inputs, mismatching passwords,
+ * and successful matches.
+ */
 
 class ValidateConfirmPasswordTest {
 

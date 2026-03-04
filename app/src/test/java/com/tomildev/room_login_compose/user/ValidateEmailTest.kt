@@ -6,6 +6,15 @@ import com.tomildev.room_login_compose.core.domain.use_case.user.ValidateEmail
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
+/**
+ * Unit tests for the [ValidateEmail] use case.
+ *
+ * This class verifies the email validation logic, ensuring that appropriate
+ * [UserValidationResult]s and [UserValidationError]s are returned for various
+ * scenarios such as empty inputs, improperly formatted email addresses,
+ * and successful validations.
+ */
+
 class ValidateEmailTest {
 
     private val validateEmail = ValidateEmail()
