@@ -16,4 +16,12 @@
     <string name="register_label_name">Name</string>
     <string name="register_label_password">Password</string>
     <string name="register_btn_signup">Sign Up</string>
+    <string name="register_text_action">Already Have Account? Log In</string>
+
+    <!-- Network errors -->
+    <string name="register_network_no_internet_error">No internet connection</string>
+    <string name="register_network_email_already_exists_error">This email is already registered</string>
+    <string name="register_network_unknown_error">An unknown error occurred</string>
+    <string name="register_network_service_unavailable_error">Application service unavailable</string>
+
 </resources>
