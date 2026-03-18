@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.tomildev.room_login_compose.core.common.presentation.asString
+import com.tomildev.room_login_compose.core.common.presentation.mapper.asString
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryButton
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimarySubtitle
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryTextField

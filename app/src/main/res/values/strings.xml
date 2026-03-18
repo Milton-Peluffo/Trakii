@@ -20,6 +20,7 @@
 
     <!-- Network errors -->
     <string name="register_network_no_internet_error">No internet connection</string>
+    <string name="register_network_timeout_error">Request timed out</string>
     <string name="register_network_email_already_exists_error">This email is already registered</string>
     <string name="register_network_unknown_error">An unknown error occurred</string>
     <string name="register_network_service_unavailable_error">Application service unavailable</string>
