@@ -2,6 +2,7 @@ package com.tomildev.room_login_compose.features.auth.register.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomildev.room_login_compose.core.domain.model.error.DataError
 import com.tomildev.room_login_compose.core.domain.model.user.User
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationError
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationResult
@@ -38,6 +39,7 @@ class RegisterViewmodel @Inject constructor(
 //            registerUser()
         }
     }
+
     private fun validateFields(): Boolean {
         val state = _uiState.value
 
@@ -163,6 +165,7 @@ data class RegisterUiState(
     val isRegistrationSuccess: Boolean = false,
     val isLoading: Boolean = false,
     //ERRORS
+    val networkError: DataError? = null,
     val errorMessage: String? = null,
     val isNameError: Boolean = false,
     val isEmailError: Boolean = false,

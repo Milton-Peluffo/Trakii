@@ -48,9 +48,9 @@ class AuthRepositoryImpl @Inject constructor(
             val networkError = when (e) {
                 is retrofit2.HttpException -> {
                     when (e.code()) {
-                        408 -> DataError.Network.ServiceUnavailable
-                        409 -> DataError.Network.Conflict
-                        413 -> DataError.Network.Timeout
+                        500, 503 -> DataError.Network.ServiceUnavailable
+                        409, 412 -> DataError.Network.Conflict
+                        408 -> DataError.Network.Timeout
                         else -> DataError.Network.Unknown
                     }
                 }
