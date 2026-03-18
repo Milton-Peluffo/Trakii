@@ -68,7 +68,6 @@ dependencies {
     //ROOM
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.room.compiler.processing.testing)
     ksp(libs.androidx.room.compiler)
 
     //VIEWMODEL

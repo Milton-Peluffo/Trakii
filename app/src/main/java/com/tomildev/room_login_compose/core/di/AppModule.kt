@@ -29,7 +29,7 @@ object AppModule {
             context,
             AppDatabase::class.java,
             "user_database"
-        ).fallbackToDestructiveMigration(false).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides
@@ -38,7 +38,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthRepository(userDao: UserDao, authService: AuthService): AuthRepository {
-        return AuthRepositoryImpl(userDao, authService)
+        return AuthRepositoryImpl(authService)
     }
 
     @Provides

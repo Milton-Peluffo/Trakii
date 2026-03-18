@@ -1,23 +1,21 @@
 package com.tomildev.room_login_compose.core.common.presentation.mapper
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import com.tomildev.room_login_compose.R
 import com.tomildev.room_login_compose.core.common.presentation.util.UiText
 import com.tomildev.room_login_compose.core.domain.model.error.DataError
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationError
 
-@Composable
-fun UserValidationError.asString(): String {
-    return when (this) {
-        is UserValidationError.EmptyField -> stringResource(R.string.error_empty_field)
-        is UserValidationError.TooShortName -> stringResource(R.string.error_user_name_too_short)
-        is UserValidationError.InvalidName -> stringResource(R.string.error_user_name_invalid)
-        is UserValidationError.InvalidEmail -> stringResource(R.string.error_email_invalid)
-        is UserValidationError.TooShortPassword -> stringResource(R.string.error_password_too_short)
-        is UserValidationError.InvalidPassword -> stringResource(R.string.error_password_format)
-        is UserValidationError.PasswordDoNotMatch -> stringResource(R.string.error_confirm_password_match)
+fun UserValidationError.toUiText(): UiText {
+    val resId = when (this) {
+        UserValidationError.EmptyField -> R.string.error_empty_field
+        UserValidationError.TooShortName -> R.string.error_user_name_too_short
+        UserValidationError.InvalidName -> R.string.error_user_name_invalid
+        UserValidationError.InvalidEmail -> R.string.error_email_invalid
+        UserValidationError.TooShortPassword -> R.string.error_password_too_short
+        UserValidationError.InvalidPassword -> R.string.error_password_format
+        UserValidationError.PasswordDoNotMatch -> R.string.error_confirm_password_match
     }
+    return UiText.StringResource(resId)
 }
 
 fun DataError.toUiText(): UiText {

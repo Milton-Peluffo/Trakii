@@ -16,12 +16,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.tomildev.room_login_compose.core.common.presentation.mapper.asString
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryButton
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimarySubtitle
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryTextField
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryTitle
 import com.tomildev.room_login_compose.core.common.presentation.components.TextError
+import com.tomildev.room_login_compose.core.common.presentation.mapper.toUiText
 import com.tomildev.room_login_compose.features.auth.presentation.components.AuthTextAction
 
 @Composable
@@ -62,8 +62,8 @@ fun RegisterScreen(
                 label = "Name",
                 isError = uiState.isNameError
             )
-            if (uiState.isNameError){
-                TextError(text = uiState.nameError!!.asString())
+            if (uiState.isNameError) {
+                TextError(text = uiState.nameError!!.toUiText().asString())
             }
             Spacer(Modifier.height(5.dp))
             PrimaryTextField(
@@ -73,8 +73,8 @@ fun RegisterScreen(
                 label = "Email",
                 isError = uiState.isEmailError
             )
-            if (uiState.isEmailError){
-                TextError(text = uiState.emailError!!.asString())
+            if (uiState.isEmailError) {
+                TextError(text = uiState.emailError!!.toUiText().asString())
             }
             Spacer(Modifier.height(5.dp))
             PrimaryTextField(
@@ -85,8 +85,8 @@ fun RegisterScreen(
                 isError = uiState.isPasswordError,
                 isPasswordField = true
             )
-            if (uiState.isPasswordError){
-                TextError(text = uiState.passwordError!!.asString())
+            if (uiState.isPasswordError) {
+                TextError(text = uiState.passwordError!!.toUiText().asString())
             }
             Spacer(Modifier.height(5.dp))
             PrimaryTextField(
@@ -97,8 +97,8 @@ fun RegisterScreen(
                 isError = uiState.isPasswordConfirmError,
                 isPasswordField = true
             )
-            if (uiState.isPasswordConfirmError){
-                TextError(text = uiState.passwordConfirmError!!.asString())
+            if (uiState.isPasswordConfirmError) {
+                TextError(text = uiState.passwordConfirmError!!.toUiText().asString())
             }
             Spacer(Modifier.height(25.dp))
             PrimaryButton(
