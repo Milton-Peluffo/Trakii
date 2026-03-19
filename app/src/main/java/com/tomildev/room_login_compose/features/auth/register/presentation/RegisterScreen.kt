@@ -12,15 +12,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.tomildev.room_login_compose.R
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryButton
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimarySubtitle
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryTextField
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryTitle
 import com.tomildev.room_login_compose.core.common.presentation.components.TextError
+import com.tomildev.room_login_compose.core.common.presentation.components.dialogs.Dialogs
+import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackBars
+import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackbarBase
 import com.tomildev.room_login_compose.core.common.presentation.mapper.toUiText
 import com.tomildev.room_login_compose.features.auth.presentation.components.AuthTextAction
 
@@ -112,6 +117,7 @@ fun RegisterScreen(
                 onClick = { onNavigateToLogin() },
                 textAlign = TextAlign.Center
             )
+            SnackBars.Success(title = "Hola", onClick = {})
         }
     }
 }

@@ -9,6 +9,12 @@ val Gray20 = Color(0xFF2B2B2B)
 
 val White100 = Color(0xFFFDFDFD)
 val White80 = Color(0xFFF7F7F7)
-val Black = Color(0xFF141218)
+val Dark = Color(0xFF161616)
 
 val Error = Color(0xFFFF3D3D)
+
+// SNACKBARS COLORS
+val SuccessGreen = Color(0xFF4CAF50)
+val WarningOrange = Color(0xFFFF9800)
+val InfoBlue = Color(0xFF2196F3)
+val ErrorRed = Color(0xFFFF3D3D)

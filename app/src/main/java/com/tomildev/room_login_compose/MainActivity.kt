@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
             val isDarkTheme by userPreferences.isDarkMode.collectAsState(initial = false)
 
-            Room_login_composeTheme(darkTheme = isDarkTheme) {
+            Room_login_composeTheme(darkTheme = true) {
 
                 val userId by userPreferences.userId.collectAsState(initial = null)
 
@@ -36,14 +36,12 @@ class MainActivity : ComponentActivity() {
                     val startRoute = if (userId != -1) {
                         NavRoute.Home
                     } else {
-                        NavRoute.Login
+                        NavRoute.Register
                     }
 
                     val navController = rememberNavController()
 
                     NavigationRoot(navController = navController, startDestination = startRoute)
-
-//                SandboxScreen()
                 }
             }
         }
