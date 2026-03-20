@@ -117,7 +117,10 @@ fun RegisterScreen(
                 onClick = { onNavigateToLogin() },
                 textAlign = TextAlign.Center
             )
-            SnackBars.Success(title = "Hola", onClick = {})
+//            SnackBars.Success(title = "Hola", onClick = {})
+//            SnackBars.Suggestion(title = "Hola", onClick = {})
+//            SnackBars.Warning(title = "Hola", onClick = {})
+            SnackBars.Error(title = "Hola", onClick = {})
         }
     }
 }
