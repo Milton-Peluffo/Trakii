@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
@@ -26,7 +27,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
 
-            val isDarkTheme by userPreferences.isDarkMode.collectAsState(initial = false)
+            val systemTheme = isSystemInDarkTheme()
+            val isDarkTheme by userPreferences.isDarkMode.collectAsState(initial = systemTheme)
 
             Room_login_composeTheme(darkTheme = true) {
 

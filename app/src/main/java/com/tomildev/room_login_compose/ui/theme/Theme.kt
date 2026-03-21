@@ -8,6 +8,8 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -34,6 +36,25 @@ private val LightColorScheme = lightColorScheme(
     error = Error
 )
 
+private val ExtendedLightColors = ExtendedColors(
+    success = SuccessGreen,
+    warning = WarningOrange,
+    info = InfoBlue,
+)
+
+private val ExtendedDarkColors = ExtendedColors(
+    success = SuccessGreen,
+    warning = WarningOrange,
+    info = InfoBlue,
+)
+
+object ExtendedTheme {
+    val colors: ExtendedColors
+        @Composable
+        @ReadOnlyComposable
+        get() = localExtendedColors.current
+}
+
 @Composable
 fun Room_login_composeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -51,9 +72,15 @@ fun Room_login_composeTheme(
         else -> LightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    val extendedColors = if (darkTheme) ExtendedDarkColors else ExtendedLightColors
+
+    CompositionLocalProvider(
+        localExtendedColors provides extendedColors
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

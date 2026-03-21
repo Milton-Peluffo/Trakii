@@ -18,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,16 +34,27 @@ fun SnackbarBase(
     description: String? = null,
     icon: Painter,
     iconTint: Color,
+    containerTint: Color,
     onClick: () -> Unit
 ) {
     val shape = RoundedCornerShape(20.dp)
+    // Determines if the background is dark based on its brightness to adjust the border opacity.
+    val isDarkTheme = MaterialTheme.colorScheme.surfaceVariant.luminance() < 0.5f
+    val borderAlpha = if (isDarkTheme) 0.6f else 1.0f
+    val blendedContainerColor = containerTint
+        .copy(alpha = 0.1f)
+        .compositeOver(MaterialTheme.colorScheme.surfaceVariant)
 
     Snackbar(
         modifier = modifier
             .height(65.dp)
-            .border(width = 2.dp, shape = shape, color = iconTint.copy(alpha = 0.5f)),
+            .border(
+                width = 2.dp,
+                shape = shape,
+                color = iconTint.copy(alpha = borderAlpha)
+            ),
         shape = shape,
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        containerColor = blendedContainerColor,
         action = {
             IconButton(modifier = Modifier.fillMaxHeight(), onClick = onClick) {
                 Icon(

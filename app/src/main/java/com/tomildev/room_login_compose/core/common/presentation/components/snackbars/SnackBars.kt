@@ -1,23 +1,21 @@
 package com.tomildev.room_login_compose.core.common.presentation.components.snackbars
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.tomildev.room_login_compose.R
-import com.tomildev.room_login_compose.ui.theme.ErrorRed
-import com.tomildev.room_login_compose.ui.theme.InfoBlue
-import com.tomildev.room_login_compose.ui.theme.SuccessGreen
-import com.tomildev.room_login_compose.ui.theme.WarningOrange
+import com.tomildev.room_login_compose.ui.theme.ExtendedTheme
 
 private enum class SnackbarStyle(
     val iconRes: Int,
     val color: @Composable () -> Color
 ) {
-    Success(R.drawable.ic_success, { SuccessGreen }),
-    Info(R.drawable.ic_info, { InfoBlue }),
-    Warning(R.drawable.ic_warning, { WarningOrange }),
-    Error(R.drawable.ic_error, { ErrorRed })
+    Success(R.drawable.ic_success, { ExtendedTheme.colors.success }),
+    Info(R.drawable.ic_info, { ExtendedTheme.colors.info }),
+    Warning(R.drawable.ic_warning, { ExtendedTheme.colors.warning }),
+    Error(R.drawable.ic_error, { MaterialTheme.colorScheme.error })
 }
 
 object SnackBars {
@@ -92,6 +90,7 @@ object SnackBars {
             description = description,
             icon = painterResource(style.iconRes),
             iconTint = style.color(),
+            containerTint = style.color(),
             onClick = onClick
         )
     }
