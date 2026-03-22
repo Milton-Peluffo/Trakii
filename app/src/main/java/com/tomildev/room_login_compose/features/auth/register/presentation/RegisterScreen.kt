@@ -7,11 +7,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -22,6 +27,8 @@ import com.tomildev.room_login_compose.core.common.presentation.components.Prima
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryTitle
 import com.tomildev.room_login_compose.core.common.presentation.components.TextError
 import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackBars
+import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackbarType
+import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackbarVisualsCustom
 import com.tomildev.room_login_compose.core.common.presentation.mapper.toUiText
 import com.tomildev.room_login_compose.features.auth.presentation.components.AuthTextAction
 
@@ -34,6 +41,8 @@ fun RegisterScreen(
 ) {
 
     val uiState by registerViewmodel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(uiState.isRegistrationSuccess) {
         if (uiState.isRegistrationSuccess) {
@@ -41,7 +50,60 @@ fun RegisterScreen(
         }
     }
 
-    Scaffold { innerPadding ->
+    LaunchedEffect(Unit) {
+        registerViewmodel.uiEvents.collect { uiEvent ->
+            when (uiEvent) {
+                is RegisterUiEvent.Error -> {
+                    val errorMessage = uiEvent.error.toUiText().asString(context)
+
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsCustom(
+                            message = errorMessage,
+                            type = SnackbarType.Error
+                        )
+                    )
+                }
+
+                is RegisterUiEvent.Success -> {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsCustom(
+                            message = "Account created successfully!",
+                            type = SnackbarType.Error
+                        )
+                    )
+                }
+
+            }
+        }
+    }
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                val customVisuals = data.visuals as? SnackbarVisualsCustom
+
+                if (customVisuals != null) {
+                    when (customVisuals.type) {
+                        SnackbarType.Error -> SnackBars.Error(
+                            title = customVisuals.message,
+                            description = customVisuals.description,
+                            onClick = { data.dismiss() }
+                        )
+
+                        SnackbarType.Success -> SnackBars.Error(
+                            title = customVisuals.message,
+                            description = customVisuals.description,
+                            onClick = { data.dismiss() }
+                        )
+
+                        else -> {}
+                    }
+                } else {
+                    Snackbar(snackbarData = data)
+                }
+            }
+        }
+    ) { innerPadding ->
 
         Column(
             modifier

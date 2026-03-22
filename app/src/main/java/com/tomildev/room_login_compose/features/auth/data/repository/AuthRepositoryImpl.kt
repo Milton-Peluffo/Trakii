@@ -49,7 +49,7 @@ class AuthRepositoryImpl @Inject constructor(
                 is retrofit2.HttpException -> {
                     when (e.code()) {
                         500, 503 -> DataError.Network.ServiceUnavailable
-                        409, 412 -> DataError.Network.Conflict
+                        412, 422 -> DataError.Network.Conflict
                         408 -> DataError.Network.Timeout
                         else -> DataError.Network.Unknown
                     }

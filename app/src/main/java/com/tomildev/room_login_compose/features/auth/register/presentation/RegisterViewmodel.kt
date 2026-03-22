@@ -7,12 +7,15 @@ import com.tomildev.room_login_compose.core.domain.model.user.User
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationError
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationResult
 import com.tomildev.room_login_compose.core.domain.use_case.user.UserUseCases
+import com.tomildev.room_login_compose.core.domain.util.Result
 import com.tomildev.room_login_compose.features.auth.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,18 +28,26 @@ import javax.inject.Inject
  * creation in [AuthRepository].
  */
 
+sealed interface RegisterUiEvent {
+    data class Error(val error: DataError) : RegisterUiEvent
+    object Success : RegisterUiEvent
+}
+
 @HiltViewModel
 class RegisterViewmodel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userUseCases: UserUseCases
 ) : ViewModel() {
 
+    private val _uiEvents = Channel<RegisterUiEvent>()
+    val uiEvents = _uiEvents.receiveAsFlow()
+
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
 
     fun onRegisterClick() {
         if (validateFields()) {
-//            registerUser()
+            registerUser()
         }
     }
 
@@ -97,7 +108,8 @@ class RegisterViewmodel @Inject constructor(
     fun registerUser() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            authRepository.registerUser(
+
+            val result = authRepository.registerUser(
                 user = User(
                     id = "",
                     name = _uiState.value.name,
@@ -105,11 +117,19 @@ class RegisterViewmodel @Inject constructor(
                 ),
                 password = _uiState.value.password
             )
-            _uiState.update { currentState ->
-                delay(2500)
-                currentState.copy(isRegistrationSuccess = true)
-            }
             _uiState.update { it.copy(isLoading = false) }
+            when (result) {
+                is Result.Error -> {
+                    _uiEvents.send(RegisterUiEvent.Error(result.error))
+                }
+
+                is Result.Success -> {
+                    _uiState.update {
+                        it.copy(isRegistrationSuccess = true)
+                    }
+                    _uiEvents.send(RegisterUiEvent.Success)
+                }
+            }
         }
     }
 
