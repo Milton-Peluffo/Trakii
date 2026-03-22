@@ -36,14 +36,22 @@ class AuthRepositoryImpl @Inject constructor(
                     data = mapOf("display_name" to user.name)
                 )
             )
-            authService.createProfile(
-                profile = ProfileDto(
-                    id = authResponse.user.id,
-                    displayName = user.name
+            try {
+                authService.createProfile(
+                    profile = ProfileDto(
+                        id = authResponse.user.id,
+                        displayName = user.name
+                    )
+
                 )
-            )
+            } catch (e: retrofit2.HttpException) {
+                if (e.code() != 409) {
+                    throw e
+                }
+            }
 
             Result.Success(user)
+            
         } catch (e: Exception) {
             val networkError = when (e) {
                 is retrofit2.HttpException -> {

@@ -11,7 +11,6 @@ import com.tomildev.room_login_compose.core.domain.util.Result
 import com.tomildev.room_login_compose.features.auth.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +29,6 @@ import javax.inject.Inject
 
 sealed interface RegisterUiEvent {
     data class Error(val error: DataError) : RegisterUiEvent
-    object Success : RegisterUiEvent
 }
 
 @HiltViewModel
@@ -125,11 +123,18 @@ class RegisterViewmodel @Inject constructor(
 
                 is Result.Success -> {
                     _uiState.update {
-                        it.copy(isRegistrationSuccess = true)
+                        it.copy(showSuccessDialog = true)
                     }
-                    _uiEvents.send(RegisterUiEvent.Success)
                 }
             }
+        }
+    }
+
+    fun onDismissDialog() {
+        _uiState.update {
+            it.copy(
+                showSuccessDialog = false,
+            )
         }
     }
 
@@ -181,8 +186,8 @@ data class RegisterUiState(
     val password: String = "",
     val confirmPassword: String = "",
     //VALIDATORS
+    val showSuccessDialog: Boolean = false,
     val isRegistered: Boolean = false,
-    val isRegistrationSuccess: Boolean = false,
     val isLoading: Boolean = false,
     //ERRORS
     val networkError: DataError? = null,

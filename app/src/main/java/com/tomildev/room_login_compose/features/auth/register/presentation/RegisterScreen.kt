@@ -31,6 +31,7 @@ import com.tomildev.room_login_compose.core.common.presentation.components.snack
 import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackbarVisualsCustom
 import com.tomildev.room_login_compose.core.common.presentation.mapper.toUiText
 import com.tomildev.room_login_compose.features.auth.presentation.components.AuthTextAction
+import com.tomildev.room_login_compose.features.auth.presentation.components.RegistrationSuccessDialog
 
 @Composable
 fun RegisterScreen(
@@ -43,12 +44,6 @@ fun RegisterScreen(
     val uiState by registerViewmodel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(uiState.isRegistrationSuccess) {
-        if (uiState.isRegistrationSuccess) {
-            onNavigateToHome(uiState.email)
-        }
-    }
 
     LaunchedEffect(Unit) {
         registerViewmodel.uiEvents.collect { uiEvent ->
@@ -63,23 +58,16 @@ fun RegisterScreen(
                         )
                     )
                 }
-
-                is RegisterUiEvent.Success -> {
-                    snackbarHostState.showSnackbar(
-                        SnackbarVisualsCustom(
-                            message = "Account created successfully!",
-                            type = SnackbarType.Error
-                        )
-                    )
-                }
-
             }
         }
     }
 
     Scaffold(
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
+            SnackbarHost(
+                modifier = Modifier.padding(vertical = 20.dp),
+                hostState = snackbarHostState
+            ) { data ->
                 val customVisuals = data.visuals as? SnackbarVisualsCustom
 
                 if (customVisuals != null) {
@@ -176,13 +164,14 @@ fun RegisterScreen(
                 textAlign = TextAlign.Center
             )
             Spacer(Modifier.padding(vertical = 20.dp))
-//            SnackBars.Success(title = "Success", onClick = {})
-//            Spacer(Modifier.height(7.dp))
-//            SnackBars.Info(title = "Info", onClick = {})
-//            Spacer(Modifier.height(7.dp))
-//            SnackBars.Warning(title = "Warning", onClick = {})
-//            Spacer(Modifier.height(7.dp))
-//            SnackBars.Error(title = "Error", onClick = {})
+            if (uiState.showSuccessDialog) {
+                RegistrationSuccessDialog(
+                    onConfirm = {
+                        onNavigateToLogin()
+                        registerViewmodel.onDismissDialog()
+                    }
+                )
+            }
         }
     }
 }

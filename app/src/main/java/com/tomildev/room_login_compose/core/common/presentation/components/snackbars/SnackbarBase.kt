@@ -48,6 +48,7 @@ fun SnackbarBase(
     Snackbar(
         modifier = modifier
             .height(65.dp)
+            .padding(horizontal = 20.dp)
             .border(
                 width = 2.dp,
                 shape = shape,
