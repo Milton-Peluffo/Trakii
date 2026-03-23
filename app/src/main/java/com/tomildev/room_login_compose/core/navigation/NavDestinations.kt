@@ -11,6 +11,9 @@ sealed interface NavRoute {
     data object Register : NavRoute
 
     @Serializable
+    data object Otp : NavRoute
+
+    @Serializable
     data object Home : NavRoute
 
     @Serializable
