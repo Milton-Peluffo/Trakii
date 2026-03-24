@@ -1,0 +1,33 @@
+package com.tomildev.room_login_compose.features.auth.otp.presentation.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import com.tomildev.room_login_compose.core.common.presentation.components.texts.Texts
+import com.tomildev.room_login_compose.ui.theme.Dimens
+
+@Composable
+fun InputDigitBox(number: String) {
+
+    val shape = MaterialTheme.shapes.large
+    Box(
+        modifier = Modifier
+            .size(Dimens.OtpBoxSize)
+            .clip(shape = shape)
+            .border(width = 1.dp, shape = shape, color = MaterialTheme.colorScheme.outline)
+            .background(MaterialTheme.colorScheme.surfaceVariant),
+        contentAlignment = Alignment.Center
+    ) {
+        if (number != "")
+            Texts.TitleLarge(text = number)
+        else
+            Texts.TitleLarge(text = "—", isSecondary = true)
+    }
+}

@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tomildev.room_login_compose.R
+import com.tomildev.room_login_compose.ui.theme.Dimens
 
 @Composable
 fun SnackbarBase(
@@ -71,7 +72,7 @@ fun SnackbarBase(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                modifier = Modifier.size(28.dp),
+                modifier = Modifier.size(Dimens.IconSizeMedium),
                 painter = icon,
                 contentDescription = null,
                 tint = iconTint
