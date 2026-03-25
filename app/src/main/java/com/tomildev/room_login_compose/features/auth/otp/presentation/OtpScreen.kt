@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +31,7 @@ fun OtpScreen(
 
     val state by otpViewModel.uiState.collectAsStateWithLifecycle()
     val digits by otpViewModel.digitList.collectAsStateWithLifecycle()
+    val activeIndex by otpViewModel.activeIndex.collectAsStateWithLifecycle()
 
 
     Scaffold { innerPadding ->
@@ -59,8 +59,12 @@ fun OtpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                digits.forEach { digit ->
-                    InputDigitBox(number = digit)
+                digits.forEachIndexed { index, digit ->
+                    InputDigitBox(
+                        number = digit,
+                        isCursorVisible = index == activeIndex
+
+                    )
                 }
             }
             VerticalSpacer(Dimens.SpacingLarge)
@@ -73,8 +77,9 @@ fun OtpScreen(
             PrimaryButton(text = "Verify", onClick = { })
             VerticalSpacer(Dimens.SpacingLarge)
             CustomNumericKeyboard(
-                onNumberClick = { otpViewModel.onNumberclick(it) },
-                onDeleteClick = { otpViewModel.onDeleteClick() }
+                onNumberClick = { otpViewModel.onNumberClick(it) },
+                onDeleteClick = { otpViewModel.onDeleteClick() },
+                onClearAll = { otpViewModel.clearAll() }
             )
         }
     }

@@ -31,8 +31,22 @@ class OtpViewModel() : ViewModel() {
             initialValue = listOf("", "", "", "")
         )
 
+    /**
+     * A [StateFlow] representing the index of the next digit to be entered in the OTP sequence.
+     * The value ranges from 0 to 3, corresponding to the current input position.
+     * If all 4 digits have been entered, the value becomes -1.
+     */
+    val activeIndex: StateFlow<Int> = _uiState
+        .map { state ->
+            if (state.code.length < 4) state.code.length else -1
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0
+        )
 
-    fun onNumberclick(number: String) {
+
+    fun onNumberClick(number: String) {
         val currentCode = _uiState.value.code
         if (currentCode.length < 4) {
             val newCode = currentCode + number
@@ -49,6 +63,12 @@ class OtpViewModel() : ViewModel() {
             _uiState.update {
                 it.copy(code = newCode, isVerifyEnable = false)
             }
+        }
+    }
+
+    fun clearAll() {
+        _uiState.update {
+            it.copy(code = "", isVerifyEnable = false)
         }
     }
 }

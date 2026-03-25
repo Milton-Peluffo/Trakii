@@ -15,6 +15,7 @@ fun CustomNumericKeyboard(
     modifier: Modifier = Modifier,
     onNumberClick: (String) -> Unit,
     onDeleteClick: () -> Unit,
+    onClearAll: () -> Unit,
 ) {
 
     val numbers = listOf(
@@ -44,7 +45,11 @@ fun CustomNumericKeyboard(
         ) {
             NumericKey(text = "", onClick = { })
             NumericKey(text = "0", onClick = { onNumberClick("0") })
-            NumericKey(icon = painterResource(R.drawable.ic_delete_left), onClick = onDeleteClick)
+            NumericKey(
+                icon = painterResource(R.drawable.ic_delete_left),
+                onClick = onDeleteClick,
+                onLongClick = onClearAll
+            )
         }
     }
 }

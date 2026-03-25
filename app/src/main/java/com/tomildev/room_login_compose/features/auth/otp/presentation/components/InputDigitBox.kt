@@ -9,25 +9,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tomildev.room_login_compose.core.common.presentation.components.texts.Texts
 import com.tomildev.room_login_compose.ui.theme.Dimens
 
 @Composable
-fun InputDigitBox(number: String) {
-
+fun InputDigitBox(
+    number: String,
+    isCursorVisible: Boolean
+) {
     val shape = MaterialTheme.shapes.large
     Box(
         modifier = Modifier
             .size(Dimens.OtpBoxSize)
             .clip(shape = shape)
-            .border(width = 1.dp, shape = shape, color = MaterialTheme.colorScheme.outline)
+            .border(
+                width = if (isCursorVisible) 2.dp else 1.dp,
+                shape = shape,
+                color = if (isCursorVisible) Color.LightGray else MaterialTheme.colorScheme.outline
+            )
             .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center
     ) {
-        if (number.isNotBlank())
-            Texts.TitleLarge(text = number)
-        else
-            Texts.TitleLarge(text = "—", isSecondary = true)
+        when {
+            number.isNotBlank() -> Texts.TitleLarge(text = number)
+            isCursorVisible -> BlinkingCursor()
+            else -> Texts.TitleLarge(text = "—", isSecondary = true)
+        }
     }
 }
