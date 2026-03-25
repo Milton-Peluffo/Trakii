@@ -1,26 +1,22 @@
 package com.tomildev.room_login_compose.features.auth.otp.presentation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tomildev.room_login_compose.core.common.presentation.components.buttons.PrimaryButton
 import com.tomildev.room_login_compose.core.common.presentation.components.spacers.VerticalSpacer
 import com.tomildev.room_login_compose.core.common.presentation.components.texts.Texts
+import com.tomildev.room_login_compose.features.auth.otp.presentation.components.CustomNumericKeyboard
 import com.tomildev.room_login_compose.features.auth.otp.presentation.components.InputDigitBox
 import com.tomildev.room_login_compose.ui.theme.Dimens
 
@@ -31,10 +27,11 @@ fun OtpScreen(modifier: Modifier = Modifier) {
 
         Column(
             modifier = modifier
+                .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 30.dp),
+                .padding(horizontal = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
             VerticalSpacer(Dimens.ScreenPadding)
             Texts.Headline(text = "Check your inbox")
@@ -48,13 +45,13 @@ fun OtpScreen(modifier: Modifier = Modifier) {
             Texts.TitleMedium(text = "xxxx@gmail.com", isSecondary = false)
             VerticalSpacer(Dimens.SpacingLarge)
             Row(
-                modifier = Modifier,
-                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 InputDigitBox(number = "2")
                 InputDigitBox(number = "2")
-                InputDigitBox(number = "2")
-                InputDigitBox(number = "2")
+                InputDigitBox(number = "")
+                InputDigitBox(number = "")
             }
             VerticalSpacer(Dimens.SpacingLarge)
             TextButton(onClick = {}) {
@@ -64,6 +61,11 @@ fun OtpScreen(modifier: Modifier = Modifier) {
             }
             VerticalSpacer(Dimens.SpacingLarge)
             PrimaryButton(text = "Verify", onClick = { })
+            VerticalSpacer(Dimens.SpacingLarge)
+            CustomNumericKeyboard(
+                onNumberClick = { },
+                onDeleteClick = { }
+            )
         }
     }
 }
