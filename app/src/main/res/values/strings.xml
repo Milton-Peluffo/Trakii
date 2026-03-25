@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Room Login Compose</string>
+    <string name="app_name">Trakii</string>
 
     <!-- COMMON -->
     <string name="error_empty_field">This field cannot be empty</string>

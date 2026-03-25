@@ -17,6 +17,16 @@ import androidx.compose.ui.graphics.painter.Painter
 import com.tomildev.room_login_compose.core.common.presentation.components.texts.Texts
 import com.tomildev.room_login_compose.ui.theme.Dimens
 
+/**
+ * A composable representing a single key in a numeric keypad, used for OTP feature.
+ * It can display either a text value or an icon and supports both click and long-click actions.
+ *
+ * @param modifier The [Modifier] to be applied to the key's layout.
+ * @param text The string to be displayed inside the key (e.g., "1", "2").
+ * @param icon An optional [Painter] to display an icon instead of text (e.g., a backspace icon).
+ * @param onClick Callback to be executed when the key is pressed.
+ * @param onLongClick Optional callback to be executed when the key is long-pressed.
+ */
 @Composable
 fun NumericKey(
     modifier: Modifier = Modifier,
@@ -53,5 +63,4 @@ fun NumericKey(
             Texts.Headline(text = text)
         }
     }
-
 }

@@ -14,6 +14,15 @@ import androidx.compose.ui.unit.dp
 import com.tomildev.room_login_compose.core.common.presentation.components.texts.Texts
 import com.tomildev.room_login_compose.ui.theme.Dimens
 
+/**
+ * A composable that represents a single digit input box within an OTP (One-Time Password) field.
+ *
+ * Displays the provided digit, a blinking cursor if the box is currently active and empty,
+ * or a placeholder character if the box is empty and not focused.
+ *
+ * @param number The digit string to be displayed in the box.
+ * @param isCursorVisible Whether the blinking cursor should be shown, indicating the box is currently focused.
+ */
 @Composable
 fun InputDigitBox(
     number: String,

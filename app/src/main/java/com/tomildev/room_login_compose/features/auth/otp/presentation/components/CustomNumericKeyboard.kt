@@ -10,6 +10,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.tomildev.room_login_compose.R
 
+/**
+ * A custom numeric keypad component designed for OTP screen.
+ * Displays a grid of numbers from 0-9 and a delete action button.
+ *
+ * @param modifier The [Modifier] to be applied to the keyboard layout.
+ * @param onNumberClick Callback invoked when a numeric key is pressed, providing the [String] value of the digit.
+ * @param onDeleteClick Callback invoked when the delete key is pressed once.
+ * @param onClearAll Callback invoked when the delete key is long-pressed, used to reset the entire input.
+ */
 @Composable
 fun CustomNumericKeyboard(
     modifier: Modifier = Modifier,
