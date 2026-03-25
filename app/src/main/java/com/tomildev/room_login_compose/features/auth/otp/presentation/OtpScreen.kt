@@ -9,10 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tomildev.room_login_compose.core.common.presentation.components.buttons.PrimaryButton
 import com.tomildev.room_login_compose.core.common.presentation.components.spacers.VerticalSpacer
 import com.tomildev.room_login_compose.core.common.presentation.components.texts.Texts
@@ -21,7 +25,14 @@ import com.tomildev.room_login_compose.features.auth.otp.presentation.components
 import com.tomildev.room_login_compose.ui.theme.Dimens
 
 @Composable
-fun OtpScreen(modifier: Modifier = Modifier) {
+fun OtpScreen(
+    modifier: Modifier = Modifier,
+    otpViewModel: OtpViewModel = viewModel()
+) {
+
+    val state by otpViewModel.uiState.collectAsStateWithLifecycle()
+    val digits by otpViewModel.digitList.collectAsStateWithLifecycle()
+
 
     Scaffold { innerPadding ->
 
@@ -48,10 +59,9 @@ fun OtpScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                InputDigitBox(number = "2")
-                InputDigitBox(number = "2")
-                InputDigitBox(number = "")
-                InputDigitBox(number = "")
+                digits.forEach { digit ->
+                    InputDigitBox(number = digit)
+                }
             }
             VerticalSpacer(Dimens.SpacingLarge)
             TextButton(onClick = {}) {
@@ -63,8 +73,8 @@ fun OtpScreen(modifier: Modifier = Modifier) {
             PrimaryButton(text = "Verify", onClick = { })
             VerticalSpacer(Dimens.SpacingLarge)
             CustomNumericKeyboard(
-                onNumberClick = { },
-                onDeleteClick = { }
+                onNumberClick = { otpViewModel.onNumberclick(it) },
+                onDeleteClick = { otpViewModel.onDeleteClick() }
             )
         }
     }

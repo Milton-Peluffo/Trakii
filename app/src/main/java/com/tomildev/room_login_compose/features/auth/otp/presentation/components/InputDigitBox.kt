@@ -25,7 +25,7 @@ fun InputDigitBox(number: String) {
             .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center
     ) {
-        if (number != "")
+        if (number.isNotBlank())
             Texts.TitleLarge(text = number)
         else
             Texts.TitleLarge(text = "—", isSecondary = true)

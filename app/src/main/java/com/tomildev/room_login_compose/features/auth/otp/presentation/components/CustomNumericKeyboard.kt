@@ -13,8 +13,8 @@ import com.tomildev.room_login_compose.R
 @Composable
 fun CustomNumericKeyboard(
     modifier: Modifier = Modifier,
-    onNumberClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onNumberClick: (String) -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
 
     val numbers = listOf(
@@ -34,7 +34,7 @@ fun CustomNumericKeyboard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 row.forEach { number ->
-                    NumericKey(text = number, onClick = { onNumberClick() })
+                    NumericKey(text = number, onClick = { onNumberClick(number) })
                 }
             }
         }
@@ -42,8 +42,8 @@ fun CustomNumericKeyboard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            NumericKey(text = "", onClick = {})
-            NumericKey(text = "0", onClick = { onNumberClick() })
+            NumericKey(text = "", onClick = { })
+            NumericKey(text = "0", onClick = { onNumberClick("0") })
             NumericKey(icon = painterResource(R.drawable.ic_delete_left), onClick = onDeleteClick)
         }
     }
