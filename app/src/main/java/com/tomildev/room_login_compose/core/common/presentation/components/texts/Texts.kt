@@ -25,12 +25,14 @@ object Texts {
     @Composable
     fun TitleLarge(
         text: String,
+        color: Color,
         modifier: Modifier = Modifier,
         isSecondary: Boolean? = false,
         textAlign: TextAlign = TextAlign.Start
     ) {
         AppText(
             text = text,
+            color = color,
             style = MaterialTheme.typography.titleLarge,
             alpha = if (isSecondary!!) 0.6f else 1f,
             modifier = modifier,

@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tomildev.room_login_compose.core.common.presentation.components.texts.Texts
 import com.tomildev.room_login_compose.ui.theme.Dimens
+import com.tomildev.room_login_compose.ui.theme.ExtendedTheme
 
 /**
  * A composable that represents a single digit input box within an OTP (One-Time Password) field.
@@ -26,25 +27,48 @@ import com.tomildev.room_login_compose.ui.theme.Dimens
 @Composable
 fun InputDigitBox(
     number: String,
-    isCursorVisible: Boolean
+    isCursorVisible: Boolean,
+    isOtpCorrect: Boolean = true,
+    isOtpInCorrect: Boolean = false
 ) {
     val shape = MaterialTheme.shapes.large
+    val isNumber = number.isNotBlank()
+    val borderColor = when {
+        isOtpCorrect && isNumber -> ExtendedTheme.colors.success
+        isOtpInCorrect && isNumber -> MaterialTheme.colorScheme.error
+        !isCursorVisible && isNumber -> Color.LightGray
+        isCursorVisible -> Color.LightGray
+        else -> MaterialTheme.colorScheme.outline
+    }
+    val borderWidth =
+        when {
+            isOtpCorrect && isNumber || isOtpInCorrect && isNumber -> 1.dp
+            isCursorVisible -> 2.dp
+            else -> 1.dp
+        }
     Box(
         modifier = Modifier
             .size(Dimens.OtpBoxSize)
             .clip(shape = shape)
             .border(
-                width = if (isCursorVisible) 2.dp else 1.dp,
+                width = borderWidth,
                 shape = shape,
-                color = if (isCursorVisible) Color.LightGray else MaterialTheme.colorScheme.outline
+                color = borderColor
             )
             .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center
     ) {
+
+        val numberColor = when {
+            isOtpCorrect -> ExtendedTheme.colors.success
+            isOtpInCorrect -> MaterialTheme.colorScheme.error
+            else -> Color.Unspecified
+        }
+
         when {
-            number.isNotBlank() -> Texts.TitleLarge(text = number)
+            isNumber -> Texts.TitleLarge(text = number, color = numberColor)
             isCursorVisible -> BlinkingCursor()
-            else -> Texts.TitleLarge(text = "—", isSecondary = true)
+            else -> Texts.TitleLarge(text = "—", isSecondary = true, color = Color.Unspecified)
         }
     }
 }
