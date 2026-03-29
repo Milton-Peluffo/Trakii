@@ -28,7 +28,7 @@ import com.tomildev.room_login_compose.ui.theme.ExtendedTheme
 fun InputDigitBox(
     number: String,
     isCursorVisible: Boolean,
-    isOtpCorrect: Boolean = true,
+    isOtpCorrect: Boolean = false,
     isOtpInCorrect: Boolean = false
 ) {
     val shape = MaterialTheme.shapes.large
