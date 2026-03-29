@@ -28,8 +28,16 @@ android {
             properties.load(propertiesFile.inputStream())
         }
 
-        buildConfigField("String", "SUPABASE_URL", "\"${properties.getProperty("SUPABASE_URL") ?: ""}\"")
-        buildConfigField("String", "SUPABASE_ANON_KEY", "\"${properties.getProperty("SUPABASE_ANON_KEY") ?: ""}\"")
+        buildConfigField(
+            "String",
+            "SUPABASE_URL",
+            "\"${properties.getProperty("SUPABASE_URL") ?: ""}\""
+        )
+        buildConfigField(
+            "String",
+            "SUPABASE_ANON_KEY",
+            "\"${properties.getProperty("SUPABASE_ANON_KEY") ?: ""}\""
+        )
 
     }
 
@@ -64,6 +72,12 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+
+    //SUPABASE
+    implementation(libs.supabase.auth)
+    implementation(libs.supabase.bom)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.core)
 
     //LOTTIE
     implementation(libs.lottie.compose)
