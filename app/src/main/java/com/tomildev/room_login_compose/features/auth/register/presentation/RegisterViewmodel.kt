@@ -107,7 +107,7 @@ class RegisterViewmodel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val result = authRepository.registerUser(
+            val result = authRepository.signUp(
                 user = User(
                     id = "",
                     name = _uiState.value.name,

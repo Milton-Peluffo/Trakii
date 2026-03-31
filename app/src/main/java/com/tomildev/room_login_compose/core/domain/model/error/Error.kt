@@ -11,7 +11,8 @@ sealed interface Error
 sealed class DataError : Error {
     sealed class Network : DataError() {
         object ServiceUnavailable : Network()
-        object Unauthorized : Network()
+        object InvalidCredentials : Network()
+        object InvalidOtp : Network()
         object Conflict : Network()
         object NoInternet : Network()
         object Timeout : Network()

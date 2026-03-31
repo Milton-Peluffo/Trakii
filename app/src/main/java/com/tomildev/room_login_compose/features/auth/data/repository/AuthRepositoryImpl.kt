@@ -7,8 +7,8 @@ import com.tomildev.room_login_compose.features.auth.domain.repository.AuthRepos
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.OtpType
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.exception.AuthRestException
 import io.github.jan.supabase.auth.providers.builtin.Email
-import io.github.jan.supabase.exceptions.BadRequestRestException
 import io.github.jan.supabase.exceptions.HttpRequestException
 import io.github.jan.supabase.exceptions.RestException
 import io.github.jan.supabase.exceptions.UnauthorizedRestException
@@ -42,6 +42,7 @@ class AuthRepositoryImpl @Inject constructor(
             }
             Result.Success(Unit)
         } catch (e: Exception) {
+            e.printStackTrace()
             Result.Error(error = mapSupabaseError(e))
         }
     }
@@ -55,17 +56,18 @@ class AuthRepositoryImpl @Inject constructor(
             )
             Result.Success(Unit)
         } catch (e: Exception) {
+            e.printStackTrace()
             Result.Error(error = mapSupabaseError(e))
         }
     }
 
     private fun mapSupabaseError(e: Exception): DataError.Network {
         return when (e) {
-            is BadRequestRestException -> {
+            is AuthRestException -> {
                 val message = e.message ?: ""
 
                 when {
-                    message.contains("already_exists") -> DataError.Network.Conflict
+                    message.contains("user_already_exists") -> DataError.Network.Conflict
                     else -> DataError.Network.Unknown
                 }
             }
@@ -75,7 +77,7 @@ class AuthRepositoryImpl @Inject constructor(
             }
 
             is UnauthorizedRestException -> {
-                DataError.Network.Unauthorized
+                DataError.Network.InvalidOtp
             }
 
             is java.io.IOException -> {

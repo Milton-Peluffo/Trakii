@@ -28,4 +28,7 @@
     <string name="register_network_email_already_exists_error">This email is already registered</string>
     <string name="register_network_unknown_error">An unknown error occurred</string>
     <string name="register_network_service_unavailable_error">Application service unavailable</string>
+
+    <string name="otp_network_invalid_code_error">Invalid verification code</string>
+    <string name="login_network_invalid_credentials_error">Invalid email or password</string>
 </resources>

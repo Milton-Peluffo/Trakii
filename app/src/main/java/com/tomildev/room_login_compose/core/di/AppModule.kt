@@ -4,10 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import com.tomildev.room_login_compose.core.data.dao.UserDao
 import com.tomildev.room_login_compose.core.data.local.db.AppDatabase
-import com.tomildev.room_login_compose.core.data.repository.UserRepositoryImpl
 import com.tomildev.room_login_compose.core.data.preferences.UserPreferences
+import com.tomildev.room_login_compose.core.data.repository.UserRepositoryImpl
 import com.tomildev.room_login_compose.core.domain.repository.UserRepository
-import com.tomildev.room_login_compose.features.auth.data.remote.service.AuthService
 import com.tomildev.room_login_compose.features.auth.data.repository.AuthRepositoryImpl
 import com.tomildev.room_login_compose.features.auth.domain.repository.AuthRepository
 import dagger.Module
@@ -15,6 +14,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.github.jan.supabase.SupabaseClient
 import javax.inject.Singleton
 
 @Module
@@ -37,8 +37,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(userDao: UserDao, authService: AuthService): AuthRepository {
-        return AuthRepositoryImpl(authService)
+    fun provideAuthRepository(supabaseClient: SupabaseClient): AuthRepository {
+        return AuthRepositoryImpl(supabaseClient)
     }
 
     @Provides
