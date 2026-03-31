@@ -12,7 +12,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tomildev.room_login_compose.core.common.presentation.components.texts.Texts
-import com.tomildev.room_login_compose.ui.theme.Dimens
 import com.tomildev.room_login_compose.ui.theme.ExtendedTheme
 
 /**
@@ -48,7 +47,7 @@ fun InputDigitBox(
         }
     Box(
         modifier = Modifier
-            .size(Dimens.OtpBoxSize)
+            .size(height = 65.dp, width = 50.dp)
             .clip(shape = shape)
             .border(
                 width = borderWidth,

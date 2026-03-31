@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,12 +28,15 @@ import com.tomildev.room_login_compose.core.common.presentation.components.space
 import com.tomildev.room_login_compose.core.common.presentation.components.texts.Texts
 import com.tomildev.room_login_compose.features.auth.otp.presentation.components.CustomNumericKeyboard
 import com.tomildev.room_login_compose.features.auth.otp.presentation.components.InputDigitBox
+import com.tomildev.room_login_compose.features.settings.presentation.components.BackButton
 import com.tomildev.room_login_compose.ui.theme.Dimens
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OtpScreen(
     modifier: Modifier = Modifier,
-    otpViewModel: OtpViewModel = viewModel()
+    otpViewModel: OtpViewModel = viewModel(),
+    onNavigateBack: () -> Unit
 ) {
     val state by otpViewModel.uiState.collectAsStateWithLifecycle()
     val digits by otpViewModel.digitList.collectAsStateWithLifecycle()
@@ -41,27 +45,42 @@ fun OtpScreen(
     val configuration = LocalConfiguration.current
     val isLandScape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    val verticalGap = if (isLandScape) Dimens.SpacingSmall else Dimens.SpacingLarge
-    val headerGap = if (isLandScape) Dimens.SpacingTiny else Dimens.SpacingSmall
+    val verticalGap = if (isLandScape) Dimens.SpacingTiny else Dimens.SpacingLarge
 
     val otpFormContent = @Composable {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(if (isLandScape) 4.dp else 0.dp)
         ) {
-            Texts.Headline(text = "Check your inbox")
-            VerticalSpacer(headerGap)
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                BackButton(
+                    onClick = onNavigateBack,
+                    modifier = Modifier.align(Alignment.CenterStart)
+                )
+
+                Texts.Headline(
+                    text = "Code verification",
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+            VerticalSpacer(verticalGap)
             Texts.TitleMedium(
-                text = "We have sent you a code",
+                text = "Enter the code we've sent to",
                 isSecondary = true,
                 textAlign = TextAlign.Center
             )
-            VerticalSpacer(verticalGap)
-            Texts.TitleMedium(text = "xxxx@gmail.com", isSecondary = false)
+            VerticalSpacer(verticalGap / 2)
+            Texts.TitleMedium(
+                text = " xxxx@gmail.com",
+                textAlign = TextAlign.Center
+            )
             VerticalSpacer(verticalGap)
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 digits.forEachIndexed { index, digit ->
                     InputDigitBox(
@@ -101,7 +120,12 @@ fun OtpScreen(
             modifier = modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = if (isLandScape) 20.dp else 40.dp),
+                .padding(
+                    horizontal = if (isLandScape)
+                        Dimens.ScreenHorizontalPadding
+                    else
+                        Dimens.ScreenHorizontalPadding
+                ),
         ) {
             if (isLandScape) {
                 Row(
@@ -119,7 +143,8 @@ fun OtpScreen(
                     }
                     HorizontalSpacer(Dimens.SpacingLarge)
                     Box(
-                        modifier = Modifier.weight(0.9f),
+                        modifier = Modifier
+                            .weight(0.9f),
                         contentAlignment = Alignment.Center
                     ) {
                         keyboardContent()

@@ -41,7 +41,9 @@ fun NavigationRoot(
         }
 
         composable<NavRoute.Otp> {
-            OtpScreen()
+            OtpScreen(onNavigateBack = {
+                navController.popBackStack()
+            })
         }
 
         composable<NavRoute.Home> {

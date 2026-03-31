@@ -22,13 +22,13 @@ class OtpViewModel() : ViewModel() {
      */
     val digitList: StateFlow<List<String>> = _uiState
         .map { state ->
-            (0..3).map { index ->
+            (0..5).map { index ->
                 state.code.getOrNull(index)?.toString() ?: ""
             }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = listOf("", "", "", "")
+            initialValue = listOf("", "", "", "", "", "")
         )
 
     /**
@@ -38,7 +38,7 @@ class OtpViewModel() : ViewModel() {
      */
     val activeIndex: StateFlow<Int> = _uiState
         .map { state ->
-            if (state.code.length < 4) state.code.length else -1
+            if (state.code.length < 6) state.code.length else -1
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -48,10 +48,10 @@ class OtpViewModel() : ViewModel() {
 
     fun onNumberClick(number: String) {
         val currentCode = _uiState.value.code
-        if (currentCode.length < 4) {
+        if (currentCode.length < 6) {
             val newCode = currentCode + number
             _uiState.update {
-                it.copy(code = newCode, isVerifyEnable = newCode.length == 4)
+                it.copy(code = newCode, isVerifyEnable = newCode.length == 6)
             }
         }
     }

@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.dp
 
 object Dimens {
     val ScreenPadding = 30.dp
+    val ScreenHorizontalPadding = 20.dp
 
     val SpacingTiny = 4.dp
     val SpacingSmall = 8.dp
@@ -12,7 +13,6 @@ object Dimens {
     val SpacingExtraLarge = 32.dp
     val SpacingHuge = 48.dp
 
-    val OtpBoxSize = 65.dp
     val KeySize = 80.dp
     val ButtonHeight = 56.dp
     val IconSizeNormal = 14.dp
