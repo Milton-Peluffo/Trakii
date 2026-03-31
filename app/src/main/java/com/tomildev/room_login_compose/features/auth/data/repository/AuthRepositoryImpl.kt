@@ -73,15 +73,17 @@ class AuthRepositoryImpl @Inject constructor(
             }
 
             is HttpRequestException -> {
-                DataError.Network.Timeout
+                val message = e.message ?: ""
+
+                when {
+                    message.contains("Unable to resolve host") -> DataError.Network.NoInternet
+                    message.contains("timeout") || message.contains("timed out") -> DataError.Network.Timeout
+                    else -> DataError.Network.NoInternet
+                }
             }
 
             is UnauthorizedRestException -> {
                 DataError.Network.InvalidOtp
-            }
-
-            is java.io.IOException -> {
-                DataError.Network.NoInternet
             }
 
             is RestException -> {
