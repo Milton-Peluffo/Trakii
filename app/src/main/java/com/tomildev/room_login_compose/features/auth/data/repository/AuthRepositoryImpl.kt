@@ -3,70 +3,90 @@ package com.tomildev.room_login_compose.features.auth.data.repository
 import com.tomildev.room_login_compose.core.domain.model.error.DataError
 import com.tomildev.room_login_compose.core.domain.model.user.User
 import com.tomildev.room_login_compose.core.domain.util.Result
-import com.tomildev.room_login_compose.features.auth.data.remote.dto.ProfileDto
-import com.tomildev.room_login_compose.features.auth.data.remote.dto.SignUpRequestDto
-import com.tomildev.room_login_compose.features.auth.data.remote.service.AuthService
 import com.tomildev.room_login_compose.features.auth.domain.repository.AuthRepository
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.OtpType
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.exceptions.BadRequestRestException
+import io.github.jan.supabase.exceptions.HttpRequestException
+import io.github.jan.supabase.exceptions.RestException
+import io.github.jan.supabase.exceptions.UnauthorizedRestException
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import javax.inject.Inject
 
 /**
- * Implementation of [AuthRepository] that handles user registration using a remote API.
+ * Implementation of [AuthRepository] that handles authentication using Supabase Auth.
  *
- * This class coordinates the sign-up flow by first creating the user account
- * and then creating the user's profile with additional data like display name.
- *
- * It also handles errors from the network and maps them into [DataError.Network]
- * so they can be used safely in the domain layer.
- *
- * @property authService Service used to perform authentication requests.
+ * This repository manages user sign up and email OTP verification by interacting
+ * with the [SupabaseClient] authentication module. It also maps Supabase-specific
+ * exceptions into domain layer [DataError.Network] types to provide consistent
+ * and safe error handling across the app.
  */
 class AuthRepositoryImpl @Inject constructor(
-    private val authService: AuthService
+    private val supabaseClient: SupabaseClient
 ) : AuthRepository {
 
-    override suspend fun registerUser(
+    override suspend fun signUp(
         user: User,
         password: String
-    ): Result<User, DataError.Network> {
+    ): Result<Unit, DataError.Network> {
         return try {
-            val authResponse = authService.signUp(
-                request = SignUpRequestDto(
-                    email = user.email,
-                    password = password,
-                    data = mapOf("display_name" to user.name)
-                )
-            )
-            try {
-                authService.createProfile(
-                    profile = ProfileDto(
-                        id = authResponse.user.id,
-                        displayName = user.name
-                    )
-
-                )
-            } catch (e: retrofit2.HttpException) {
-                if (e.code() != 409) {
-                    throw e
+            supabaseClient.auth.signUpWith(Email) {
+                email = user.email
+                this.password = password
+                data = buildJsonObject {
+                    put("display_name", user.name)
                 }
             }
-
-            Result.Success(user)
-            
+            Result.Success(Unit)
         } catch (e: Exception) {
-            val networkError = when (e) {
-                is retrofit2.HttpException -> {
-                    when (e.code()) {
-                        500, 503 -> DataError.Network.ServiceUnavailable
-                        412, 422 -> DataError.Network.Conflict
-                        408 -> DataError.Network.Timeout
-                        else -> DataError.Network.Unknown
-                    }
-                }
+            Result.Error(error = mapSupabaseError(e))
+        }
+    }
 
-                is java.io.IOException -> DataError.Network.NoInternet
-                else -> DataError.Network.Unknown
+    override suspend fun verifyOtp(email: String, otp: String): Result<Unit, DataError.Network> {
+        return try {
+            supabaseClient.auth.verifyEmailOtp(
+                type = OtpType.Email.SIGNUP,
+                email = email,
+                token = otp
+            )
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(error = mapSupabaseError(e))
+        }
+    }
+
+    private fun mapSupabaseError(e: Exception): DataError.Network {
+        return when (e) {
+            is BadRequestRestException -> {
+                val message = e.message ?: ""
+
+                when {
+                    message.contains("already_exists") -> DataError.Network.Conflict
+                    else -> DataError.Network.Unknown
+                }
             }
-            Result.Error(networkError)
+
+            is HttpRequestException -> {
+                DataError.Network.Timeout
+            }
+
+            is UnauthorizedRestException -> {
+                DataError.Network.Unauthorized
+            }
+
+            is java.io.IOException -> {
+                DataError.Network.NoInternet
+            }
+
+            is RestException -> {
+                DataError.Network.ServiceUnavailable
+            }
+
+            else -> DataError.Network.Unknown
         }
     }
 }
