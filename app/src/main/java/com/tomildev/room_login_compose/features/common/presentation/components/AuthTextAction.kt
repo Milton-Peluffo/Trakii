@@ -1,4 +1,4 @@
-package com.tomildev.room_login_compose.features.auth.presentation.components
+package com.tomildev.room_login_compose.features.common.presentation.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

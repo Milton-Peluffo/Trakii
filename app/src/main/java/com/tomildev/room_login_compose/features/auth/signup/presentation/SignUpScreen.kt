@@ -30,8 +30,8 @@ import com.tomildev.room_login_compose.core.common.presentation.components.snack
 import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackbarType
 import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackbarVisualsCustom
 import com.tomildev.room_login_compose.core.common.presentation.mapper.toUiText
-import com.tomildev.room_login_compose.features.auth.presentation.components.AuthTextAction
-import com.tomildev.room_login_compose.features.auth.presentation.components.RegistrationSuccessDialog
+import com.tomildev.room_login_compose.features.common.presentation.components.AuthTextAction
+import com.tomildev.room_login_compose.features.common.presentation.components.RegistrationSuccessDialog
 
 @Composable
 fun RegisterScreen(
@@ -47,18 +47,19 @@ fun RegisterScreen(
 
     LaunchedEffect(Unit) {
         registerViewmodel.uiEvents.collect { uiEvent ->
-            when (uiEvent) {
-                is SignUpUiEvent.Error -> {
-                    val errorMessage = uiEvent.error.toUiText().asString(context)
-
-                    snackbarHostState.showSnackbar(
-                        SnackbarVisualsCustom(
-                            message = errorMessage,
-                            type = SnackbarType.Error
-                        )
-                    )
-                }
+            val (errorData, snackbarType) = when (uiEvent) {
+                is SignUpUiEvent.Error -> uiEvent.error to SnackbarType.Error
+                is SignUpUiEvent.Warning -> uiEvent.error to SnackbarType.Warning
             }
+
+            val errorMessage = errorData.toUiText().asString(context)
+
+            snackbarHostState.showSnackbar(
+                SnackbarVisualsCustom(
+                    message = errorMessage,
+                    type = snackbarType
+                )
+            )
         }
     }
 
@@ -78,7 +79,13 @@ fun RegisterScreen(
                             onClick = { data.dismiss() }
                         )
 
-                        SnackbarType.Success -> SnackBars.Error(
+                        SnackbarType.Success -> SnackBars.Success(
+                            title = customVisuals.message,
+                            description = customVisuals.description,
+                            onClick = { data.dismiss() }
+                        )
+
+                        SnackbarType.Warning -> SnackBars.Warning(
                             title = customVisuals.message,
                             description = customVisuals.description,
                             onClick = { data.dismiss() }

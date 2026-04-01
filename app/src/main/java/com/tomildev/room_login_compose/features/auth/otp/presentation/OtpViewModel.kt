@@ -72,10 +72,3 @@ class OtpViewModel() : ViewModel() {
         }
     }
 }
-
-data class OtpUiState(
-    val code: String = "",
-    val email: String = "",
-    val isLoading: Boolean = false,
-    val isVerifyEnable: Boolean = false
-)

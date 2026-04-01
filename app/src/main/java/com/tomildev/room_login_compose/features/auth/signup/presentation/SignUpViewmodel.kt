@@ -2,6 +2,7 @@ package com.tomildev.room_login_compose.features.auth.signup.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomildev.room_login_compose.core.domain.model.error.DataError
 import com.tomildev.room_login_compose.core.domain.model.user.User
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationError
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationResult
@@ -109,7 +110,11 @@ class RegisterViewmodel @Inject constructor(
             _uiState.update { it.copy(isLoading = false) }
             when (result) {
                 is Result.Error -> {
-                    _uiEvents.send(SignUpUiEvent.Error(result.error))
+                    if (result.error == DataError.Network.NoInternet || result.error == DataError.Network.Timeout) {
+                        _uiEvents.send(SignUpUiEvent.Warning(result.error))
+                    } else {
+                        _uiEvents.send(SignUpUiEvent.Error(result.error))
+                    }
                 }
 
                 is Result.Success -> {

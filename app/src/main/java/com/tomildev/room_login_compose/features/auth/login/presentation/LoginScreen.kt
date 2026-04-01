@@ -22,7 +22,7 @@ import com.tomildev.room_login_compose.core.common.presentation.components.Prima
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryTextField
 import com.tomildev.room_login_compose.core.common.presentation.components.PrimaryTitle
 import com.tomildev.room_login_compose.core.common.presentation.components.TextError
-import com.tomildev.room_login_compose.features.auth.presentation.components.AuthTextAction
+import com.tomildev.room_login_compose.features.common.presentation.components.AuthTextAction
 
 @Composable
 fun LoginScreen(
