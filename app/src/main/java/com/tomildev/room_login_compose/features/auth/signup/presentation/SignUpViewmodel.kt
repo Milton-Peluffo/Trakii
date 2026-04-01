@@ -1,14 +1,13 @@
-package com.tomildev.room_login_compose.features.auth.register.presentation
+package com.tomildev.room_login_compose.features.auth.signup.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tomildev.room_login_compose.core.domain.model.error.DataError
 import com.tomildev.room_login_compose.core.domain.model.user.User
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationError
 import com.tomildev.room_login_compose.core.domain.model.user.UserValidationResult
 import com.tomildev.room_login_compose.core.domain.use_case.user.UserUseCases
 import com.tomildev.room_login_compose.core.domain.util.Result
-import com.tomildev.room_login_compose.features.auth.domain.repository.AuthRepository
+import com.tomildev.room_login_compose.features.auth.signup.domain.SignUpRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,26 +21,23 @@ import javax.inject.Inject
 /**
  * ViewModel responsible for managing the user registration process.
  *
- * It centralizes the UI state through [RegisterUiState] and orchestrates
+ * It centralizes the UI state through [SignUpUiState] and orchestrates
  * input validation via [UserUseCases] before proceeding with account
  * creation in [AuthRepository].
  */
 
-sealed interface RegisterUiEvent {
-    data class Error(val error: DataError) : RegisterUiEvent
-}
 
 @HiltViewModel
 class RegisterViewmodel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val signUpRepository: SignUpRepository,
     private val userUseCases: UserUseCases
 ) : ViewModel() {
 
-    private val _uiEvents = Channel<RegisterUiEvent>()
+    private val _uiEvents = Channel<SignUpUiEvent>()
     val uiEvents = _uiEvents.receiveAsFlow()
 
-    private val _uiState = MutableStateFlow(RegisterUiState())
-    val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(SignUpUiState())
+    val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
 
     fun onRegisterClick() {
         if (validateFields()) {
@@ -94,11 +90,6 @@ class RegisterViewmodel @Inject constructor(
                 emailError = emailError,
                 passwordError = passwordError,
                 passwordConfirmError = passwordConfirmError,
-
-                isNameError = nameError != null,
-                isEmailError = emailError != null,
-                isPasswordError = passwordError != null,
-                isPasswordConfirmError = passwordConfirmError != null
             )
         }
     }
@@ -107,7 +98,7 @@ class RegisterViewmodel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val result = authRepository.signUp(
+            val result = signUpRepository.signUp(
                 user = User(
                     id = "",
                     name = _uiState.value.name,
@@ -118,7 +109,7 @@ class RegisterViewmodel @Inject constructor(
             _uiState.update { it.copy(isLoading = false) }
             when (result) {
                 is Result.Error -> {
-                    _uiEvents.send(RegisterUiEvent.Error(result.error))
+                    _uiEvents.send(SignUpUiEvent.Error(result.error))
                 }
 
                 is Result.Success -> {
@@ -139,65 +130,42 @@ class RegisterViewmodel @Inject constructor(
     }
 
     fun onNameChange(name: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
+        _uiState.update {
+            it.copy(
                 name = name,
+                nameError = null,
                 errorMessage = null,
-                isNameError = false
             )
         }
     }
 
     fun onEmailChange(email: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
+        _uiState.update {
+            it.copy(
                 email = email,
+                emailError = null,
                 errorMessage = null,
-                isEmailError = false
             )
         }
     }
 
     fun onPasswordChange(password: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
+        _uiState.update {
+            it.copy(
                 password = password,
+                passwordError = null,
                 errorMessage = null,
-                isPasswordError = false
             )
         }
     }
 
     fun onConfirmPasswordChange(confirmPassword: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
+        _uiState.update {
+            it.copy(
                 confirmPassword = confirmPassword,
+                passwordConfirmError = null,
                 errorMessage = null,
-                isPasswordConfirmError = false
             )
         }
     }
 }
-
-data class RegisterUiState(
-    //USER DATA
-    val name: String = "",
-    val email: String = "",
-    val password: String = "",
-    val confirmPassword: String = "",
-    //VALIDATORS
-    val showSuccessDialog: Boolean = false,
-    val isRegistered: Boolean = false,
-    val isLoading: Boolean = false,
-    //ERRORS
-    val networkError: DataError? = null,
-    val errorMessage: String? = null,
-    val isNameError: Boolean = false,
-    val isEmailError: Boolean = false,
-    val isPasswordError: Boolean = false,
-    val nameError: UserValidationError? = null,
-    val emailError: UserValidationError? = null,
-    val passwordError: UserValidationError? = null,
-    val passwordConfirmError: UserValidationError? = null,
-    val isPasswordConfirmError: Boolean = false,
-)

@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.tomildev.room_login_compose.features.auth.login.presentation.LoginScreen
 import com.tomildev.room_login_compose.features.auth.otp.presentation.OtpScreen
-import com.tomildev.room_login_compose.features.auth.register.presentation.RegisterScreen
+import com.tomildev.room_login_compose.features.auth.signup.presentation.RegisterScreen
 import com.tomildev.room_login_compose.features.home.HomeScreen
 import com.tomildev.room_login_compose.features.settings.presentation.SettingsScreen
 

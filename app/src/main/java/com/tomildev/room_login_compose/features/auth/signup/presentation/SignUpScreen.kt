@@ -1,4 +1,4 @@
-package com.tomildev.room_login_compose.features.auth.register.presentation
+package com.tomildev.room_login_compose.features.auth.signup.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,7 +48,7 @@ fun RegisterScreen(
     LaunchedEffect(Unit) {
         registerViewmodel.uiEvents.collect { uiEvent ->
             when (uiEvent) {
-                is RegisterUiEvent.Error -> {
+                is SignUpUiEvent.Error -> {
                     val errorMessage = uiEvent.error.toUiText().asString(context)
 
                     snackbarHostState.showSnackbar(
@@ -111,9 +111,9 @@ fun RegisterScreen(
                 value = uiState.name,
                 onValueChange = { registerViewmodel.onNameChange(name = it) },
                 label = "Name",
-                isError = uiState.isNameError
+                isError = uiState.nameError != null
             )
-            if (uiState.isNameError) {
+            if (uiState.nameError != null) {
                 TextError(text = uiState.nameError!!.toUiText().asString())
             }
             Spacer(Modifier.height(5.dp))
@@ -122,9 +122,9 @@ fun RegisterScreen(
                 value = uiState.email,
                 onValueChange = { registerViewmodel.onEmailChange(email = it) },
                 label = "Email",
-                isError = uiState.isEmailError
+                isError = uiState.emailError != null
             )
-            if (uiState.isEmailError) {
+            if (uiState.emailError != null) {
                 TextError(text = uiState.emailError!!.toUiText().asString())
             }
             Spacer(Modifier.height(5.dp))
@@ -133,10 +133,10 @@ fun RegisterScreen(
                 value = uiState.password,
                 onValueChange = { registerViewmodel.onPasswordChange(password = it) },
                 label = "Password",
-                isError = uiState.isPasswordError,
+                isError = uiState.passwordError != null,
                 isPasswordField = true
             )
-            if (uiState.isPasswordError) {
+            if (uiState.passwordError != null) {
                 TextError(text = uiState.passwordError!!.toUiText().asString())
             }
             Spacer(Modifier.height(5.dp))
@@ -145,10 +145,10 @@ fun RegisterScreen(
                 value = uiState.confirmPassword,
                 onValueChange = { registerViewmodel.onConfirmPasswordChange(confirmPassword = it) },
                 label = "Confirm password",
-                isError = uiState.isPasswordConfirmError,
+                isError = uiState.passwordConfirmError != null,
                 isPasswordField = true
             )
-            if (uiState.isPasswordConfirmError) {
+            if (uiState.passwordConfirmError != null) {
                 TextError(text = uiState.passwordConfirmError!!.toUiText().asString())
             }
             Spacer(Modifier.height(25.dp))
