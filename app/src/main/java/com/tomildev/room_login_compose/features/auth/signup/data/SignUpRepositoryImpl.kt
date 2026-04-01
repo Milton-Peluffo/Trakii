@@ -5,11 +5,13 @@ import com.tomildev.room_login_compose.core.domain.model.user.User
 import com.tomildev.room_login_compose.core.domain.util.Result
 import com.tomildev.room_login_compose.features.auth.signup.domain.SignUpRepository
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.OtpType
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.exception.AuthRestException
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.exceptions.HttpRequestException
 import io.github.jan.supabase.exceptions.RestException
+import io.github.jan.supabase.exceptions.UnauthorizedRestException
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import javax.inject.Inject
@@ -37,6 +39,23 @@ class SignUpRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun verifyOtp(
+        email: String,
+        otp: String
+    ): Result<Unit, DataError.Network> {
+        return try {
+            supabaseClient.auth.verifyEmailOtp(
+                type = OtpType.Email.SIGNUP,
+                email = email,
+                token = otp
+            )
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.Error(error = mapSupabaseError(e))
+        }
+    }
+
     private fun mapSupabaseError(e: Exception): DataError.Network {
         return when (e) {
             is AuthRestException -> {
@@ -56,6 +75,10 @@ class SignUpRepositoryImpl @Inject constructor(
                     message.contains("timeout") || message.contains("timed out") -> DataError.Network.Timeout
                     else -> DataError.Network.NoInternet
                 }
+            }
+
+            is UnauthorizedRestException -> {
+                DataError.Network.InvalidOtp
             }
 
             is RestException -> {

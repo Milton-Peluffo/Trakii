@@ -118,8 +118,8 @@ class RegisterViewmodel @Inject constructor(
                 }
 
                 is Result.Success -> {
-                    _uiState.update {
-                        it.copy(showSuccessDialog = true)
+                    viewModelScope.launch {
+                        _uiEvents.send(SignUpUiEvent.NavigateToOtp(_uiState.value.email))
                     }
                 }
             }
