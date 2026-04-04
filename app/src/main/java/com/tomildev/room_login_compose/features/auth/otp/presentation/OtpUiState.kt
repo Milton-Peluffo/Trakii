@@ -6,6 +6,8 @@ data class OtpUiState(
     val code: String = "",
     val email: String = "",
     val isLoading: Boolean = false,
+    val timer: Int = 60,
+    val canResend: Boolean = false,
     val isVerifyEnable: Boolean = false,
     val isVerified: Boolean = false,
     val error: DataError.Network? = null

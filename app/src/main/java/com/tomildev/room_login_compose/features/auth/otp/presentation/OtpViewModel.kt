@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.tomildev.room_login_compose.core.domain.util.Result
 import com.tomildev.room_login_compose.features.auth.signup.domain.SignUpRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,9 +32,26 @@ class OtpViewModel @Inject constructor(
     private val _uiEvents = Channel<OtpUiEvent>()
     val uiEvents = _uiEvents.receiveAsFlow()
 
+    private var timerJob: Job? = null
+
     init {
         val emailArg = savedStateHandle.get<String>("email") ?: ""
         _uiState.update { it.copy(email = emailArg) }
+        startTimer()
+    }
+
+    fun startTimer() {
+        timerJob?.cancel()
+
+        _uiState.update { it.copy(timer = 10, canResend = false) }
+
+        timerJob = viewModelScope.launch {
+            while (_uiState.value.timer > 0) {
+                delay(1000L)
+                _uiState.update { it.copy(timer = it.timer - 1) }
+            }
+            _uiState.update { it.copy(canResend = true) }
+        }
     }
 
     fun verifyOtp() {
@@ -101,7 +119,7 @@ class OtpViewModel @Inject constructor(
         if (currentCode.length < 6) {
             val newCode = currentCode + number
             _uiState.update {
-                it.copy(code = newCode, isVerifyEnable = newCode.length == 6)
+                it.copy(code = newCode, error = null, isVerifyEnable = newCode.length == 6)
             }
         }
     }

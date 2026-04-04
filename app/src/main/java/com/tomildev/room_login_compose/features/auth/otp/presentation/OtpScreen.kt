@@ -92,8 +92,8 @@ fun OtpScreen(
             ) {
                 digits.forEachIndexed { index, digit ->
                     InputDigitBox(
-                        isSuccess = uiState.error != null,
-                        isError = uiState.isVerified,
+                        isError = uiState.error != null,
+                        isSuccess = uiState.isVerified,
                         number = digit,
                         isCursorVisible = index == activeIndex
                     )
@@ -102,9 +102,19 @@ fun OtpScreen(
 
             VerticalSpacer(verticalGap)
 
-            TextButton(onClick = {}) {
-                Texts.TitleMedium(text = "Resend code")
+            if (uiState.timer == 0) {
+                TextButton(onClick = { otpViewModel.startTimer() }) {
+                    Texts.TitleMedium(text = "Resend code")
+                }
+            } else {
+                TextButton(onClick = {}, enabled = false) {
+                    Texts.TitleMedium(
+                        text = "Resend code in ${uiState.timer}s",
+                        isSecondary = true
+                    )
+                }
             }
+
 
             VerticalSpacer(verticalGap)
             PrimaryButton(
