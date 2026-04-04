@@ -7,6 +7,8 @@ import com.tomildev.room_login_compose.core.data.local.db.AppDatabase
 import com.tomildev.room_login_compose.core.data.preferences.UserPreferences
 import com.tomildev.room_login_compose.core.data.repository.UserRepositoryImpl
 import com.tomildev.room_login_compose.core.domain.repository.UserRepository
+import com.tomildev.room_login_compose.features.auth.otp.data.OtpRepositoryImpl
+import com.tomildev.room_login_compose.features.auth.otp.domain.OtpRepository
 import com.tomildev.room_login_compose.features.auth.signup.data.SignUpRepositoryImpl
 import com.tomildev.room_login_compose.features.auth.signup.domain.SignUpRepository
 import dagger.Module
@@ -39,6 +41,12 @@ object AppModule {
     @Singleton
     fun provideSignUpRepository(supabaseClient: SupabaseClient): SignUpRepository {
         return SignUpRepositoryImpl(supabaseClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOtpRepository(supabaseClient: SupabaseClient): OtpRepository {
+        return OtpRepositoryImpl(supabaseClient)
     }
 
     @Provides

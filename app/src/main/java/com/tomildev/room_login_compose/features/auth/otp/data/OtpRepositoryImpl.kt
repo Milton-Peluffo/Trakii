@@ -27,8 +27,8 @@ class OtpRepositoryImpl @Inject constructor(
             )
             Result.Success(Unit)
         } catch (e: Exception) {
+            e.printStackTrace()
             Result.Error(error = mapSupabaseError(e))
-
         }
     }
 
@@ -40,6 +40,7 @@ class OtpRepositoryImpl @Inject constructor(
             )
             Result.Success(Unit)
         } catch (e: Exception) {
+            e.printStackTrace()
             Result.Error(error = mapSupabaseError(e))
         }
     }

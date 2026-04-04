@@ -103,7 +103,7 @@ fun OtpScreen(
             VerticalSpacer(verticalGap)
 
             if (uiState.timer == 0) {
-                TextButton(onClick = { otpViewModel.startTimer() }) {
+                TextButton(onClick = { otpViewModel.resendOtp() }) {
                     Texts.TitleMedium(text = "Resend code")
                 }
             } else {
@@ -114,7 +114,6 @@ fun OtpScreen(
                     )
                 }
             }
-
 
             VerticalSpacer(verticalGap)
             PrimaryButton(

@@ -72,10 +72,29 @@ class OtpViewModel @Inject constructor(
     }
 
     fun resendOtp() {
+        val email = _uiState.value.email
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            val result = otpRepository.resentOtp(email)
+            _uiState.update { it.copy(isLoading = false) }
+
+            when (result) {
+                is Result.Error -> {
+                    _uiState.update { it.copy(error = result.error) }
+                }
+
+                is Result.Success -> {
+                    startTimer()
+                }
+            }
+        }
     }
 
     fun verifyOtp() {
         val currentState = _uiState.value
+        if (currentState.code.length < 6) return
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
@@ -91,18 +110,12 @@ class OtpViewModel @Inject constructor(
                 is Result.Error -> {
                     _uiState.update { it.copy(error = result.error) }
                 }
-
                 is Result.Success -> {
-                    _uiState.update { it.copy(isVerifyEnable = true) }
+                    _uiState.update { it.copy(isVerified = true) }
                 }
-            }
-            if (result is Result.Success) {
-                _uiState.update { it.copy(isVerified = true) }
-                delay(2000)
             }
         }
     }
-
 
     /**
      * A [StateFlow] representing the OTP code as a list of four individual strings.
