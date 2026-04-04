@@ -40,6 +40,23 @@ class OtpViewModel @Inject constructor(
         startTimer()
     }
 
+    val displayedEmail: String
+        get() = maskEmail(_uiState.value.email)
+
+    private fun maskEmail(email: String): String {
+        val atIndex = email.indexOf('@')
+        if (atIndex <= 1) return email
+
+        val name = email.substring(0, atIndex)
+        val domain = email.substring(atIndex)
+
+        return when {
+            name.length > 4 -> "${name.take(3)}****${name.last()}$domain"
+            name.length == 4 -> "${name.take(2)}**${name.last()}$domain"
+            else -> "${name.first()}**$domain"
+        }
+    }
+
     fun startTimer() {
         timerJob?.cancel()
 
@@ -82,6 +99,7 @@ class OtpViewModel @Inject constructor(
             }
         }
     }
+
 
     /**
      * A [StateFlow] representing the OTP code as a list of four individual strings.

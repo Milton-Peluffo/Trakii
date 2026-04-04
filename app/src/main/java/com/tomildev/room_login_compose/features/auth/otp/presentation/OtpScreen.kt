@@ -82,7 +82,7 @@ fun OtpScreen(
             )
             VerticalSpacer(verticalGap / 2)
             Texts.TitleMedium(
-                text = " xxxx@gmail.com",
+                text = otpViewModel.displayedEmail,
                 textAlign = TextAlign.Center
             )
             VerticalSpacer(verticalGap)
