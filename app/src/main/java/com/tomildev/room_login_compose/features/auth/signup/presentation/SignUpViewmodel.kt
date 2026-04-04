@@ -103,7 +103,7 @@ class RegisterViewmodel @Inject constructor(
                 user = User(
                     id = "",
                     name = _uiState.value.name,
-                    email = _uiState.value.email
+                    email = _uiState.value.email.trim().lowercase()
                 ),
                 password = _uiState.value.password
             )
@@ -118,8 +118,9 @@ class RegisterViewmodel @Inject constructor(
                 }
 
                 is Result.Success -> {
+                    val cleanedEmail = _uiState.value.email.trim().lowercase()
                     viewModelScope.launch {
-                        _uiEvents.send(SignUpUiEvent.NavigateToOtp(_uiState.value.email))
+                        _uiEvents.send(SignUpUiEvent.NavigateToOtp(cleanedEmail))
                     }
                 }
             }

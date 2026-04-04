@@ -22,7 +22,7 @@ class OtpRepositoryImpl @Inject constructor(
         return try {
             supabaseClient.auth.verifyEmailOtp(
                 type = OtpType.Email.SIGNUP,
-                email = email,
+                email = email.trim().lowercase(),
                 token = otp
             )
             Result.Success(Unit)
@@ -36,7 +36,7 @@ class OtpRepositoryImpl @Inject constructor(
         return try {
             supabaseClient.auth.resendEmail(
                 type = OtpType.Email.SIGNUP,
-                email = email
+                email = email.trim().lowercase()
             )
             Result.Success(Unit)
         } catch (e: Exception) {

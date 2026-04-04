@@ -34,7 +34,7 @@ import com.tomildev.room_login_compose.features.common.presentation.components.A
 import com.tomildev.room_login_compose.features.common.presentation.components.RegistrationSuccessDialog
 
 @Composable
-fun RegisterScreen(
+fun SignUpScreen(
     modifier: Modifier = Modifier,
     registerViewmodel: RegisterViewmodel = hiltViewModel(),
     onNavigateToLogin: () -> Unit,

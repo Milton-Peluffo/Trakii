@@ -3,7 +3,9 @@ package com.tomildev.room_login_compose.features.auth.otp.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.tomildev.room_login_compose.core.domain.util.Result
+import com.tomildev.room_login_compose.core.navigation.NavRoute
 import com.tomildev.room_login_compose.features.auth.otp.domain.OtpRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -32,11 +34,13 @@ class OtpViewModel @Inject constructor(
     private val _uiEvents = Channel<OtpUiEvent>()
     val uiEvents = _uiEvents.receiveAsFlow()
 
+    private val navArgs = savedStateHandle.toRoute<NavRoute.Otp>()
+    private val emailFromArgs = navArgs.email
+
     private var timerJob: Job? = null
 
     init {
-        val emailArg = savedStateHandle.get<String>("email") ?: ""
-        _uiState.update { it.copy(email = emailArg) }
+        _uiState.update { it.copy(email = emailFromArgs) }
         startTimer()
     }
 
@@ -96,6 +100,10 @@ class OtpViewModel @Inject constructor(
         val currentState = _uiState.value
         if (currentState.code.length < 6) return
 
+        println("DEBUG_OTP: Intentando verificar...")
+        println("DEBUG_OTP: Email: '${currentState.email}'")
+        println("DEBUG_OTP: Código: '${currentState.code}'")
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
@@ -110,6 +118,7 @@ class OtpViewModel @Inject constructor(
                 is Result.Error -> {
                     _uiState.update { it.copy(error = result.error) }
                 }
+
                 is Result.Success -> {
                     _uiState.update { it.copy(isVerified = true) }
                 }
