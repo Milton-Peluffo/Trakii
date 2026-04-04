@@ -7,6 +7,4 @@ import com.tomildev.room_login_compose.core.domain.util.Result
 interface SignUpRepository {
 
     suspend fun signUp(user: User, password: String): Result<Unit, DataError.Network>
-    suspend fun verifyOtp(email: String, otp: String): Result<Unit, DataError.Network>
-
 }

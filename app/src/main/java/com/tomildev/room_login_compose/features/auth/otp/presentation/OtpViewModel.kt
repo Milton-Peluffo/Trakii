@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomildev.room_login_compose.core.domain.util.Result
-import com.tomildev.room_login_compose.features.auth.signup.domain.SignUpRepository
+import com.tomildev.room_login_compose.features.auth.otp.domain.OtpRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OtpViewModel @Inject constructor(
-    private val signUpRepository: SignUpRepository,
+    private val otpRepository: OtpRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -71,13 +71,16 @@ class OtpViewModel @Inject constructor(
         }
     }
 
+    fun resendOtp() {
+    }
+
     fun verifyOtp() {
         val currentState = _uiState.value
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            val result = signUpRepository.verifyOtp(
+            val result = otpRepository.verifyOtp(
                 email = currentState.email,
                 otp = currentState.code
             )

@@ -1,53 +1,51 @@
-package com.tomildev.room_login_compose.features.auth.signup.data
+package com.tomildev.room_login_compose.features.auth.otp.data
 
 import com.tomildev.room_login_compose.core.domain.model.error.DataError
-import com.tomildev.room_login_compose.core.domain.model.user.User
 import com.tomildev.room_login_compose.core.domain.util.Result
-import com.tomildev.room_login_compose.features.auth.signup.domain.SignUpRepository
+import com.tomildev.room_login_compose.features.auth.otp.domain.OtpRepository
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.OtpType
 import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.exception.AuthRestException
-import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.exceptions.HttpRequestException
 import io.github.jan.supabase.exceptions.RestException
 import io.github.jan.supabase.exceptions.UnauthorizedRestException
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import javax.inject.Inject
 
-class SignUpRepositoryImpl @Inject constructor(
+class OtpRepositoryImpl @Inject constructor(
     private val supabaseClient: SupabaseClient
-) : SignUpRepository {
+) : OtpRepository {
 
-    override suspend fun signUp(
-        user: User,
-        password: String
+    override suspend fun verifyOtp(
+        email: String,
+        otp: String
     ): Result<Unit, DataError.Network> {
         return try {
-            supabaseClient.auth.signUpWith(Email) {
-                email = user.email
-                this.password = password
-                data = buildJsonObject {
-                    put("display_name", user.name)
-                }
-            }
+            supabaseClient.auth.verifyEmailOtp(
+                type = OtpType.Email.SIGNUP,
+                email = email,
+                token = otp
+            )
             Result.Success(Unit)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Result.Error(error = mapSupabaseError(e))
+
+        }
+    }
+
+    override suspend fun resentOtp(email: String): Result<Unit, DataError.Network> {
+        return try {
+            supabaseClient.auth.resendEmail(
+                type = OtpType.Email.SIGNUP,
+                email = email
+            )
+            Result.Success(Unit)
+        } catch (e: Exception) {
             Result.Error(error = mapSupabaseError(e))
         }
     }
 
     private fun mapSupabaseError(e: Exception): DataError.Network {
         return when (e) {
-            is AuthRestException -> {
-                val message = e.message ?: ""
-
-                when {
-                    message.contains("user_already_exists") -> DataError.Network.Conflict
-                    else -> DataError.Network.Unknown
-                }
-            }
 
             is HttpRequestException -> {
                 val message = e.message ?: ""
