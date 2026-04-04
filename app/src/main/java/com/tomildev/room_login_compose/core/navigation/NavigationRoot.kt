@@ -35,14 +35,16 @@ fun NavigationRoot(
         composable<NavRoute.Register> {
             RegisterScreen(onNavigateToLogin = {
                 navController.navigate(NavRoute.Login)
-            }, onNavigateToHome = {
-                navController.navigate(NavRoute.Home)
+            }, onNavigateToOtp = {
+                navController.navigate(NavRoute.Otp)
             })
         }
 
         composable<NavRoute.Otp> {
             OtpScreen(onNavigateBack = {
                 navController.popBackStack()
+            }, onNavigateToHome = {
+                navController.navigate(NavRoute.Home)
             })
         }
 

@@ -14,14 +14,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tomildev.room_login_compose.core.common.presentation.components.buttons.PrimaryButton
 import com.tomildev.room_login_compose.core.common.presentation.components.spacers.HorizontalSpacer
 import com.tomildev.room_login_compose.core.common.presentation.components.spacers.VerticalSpacer
@@ -35,10 +36,11 @@ import com.tomildev.room_login_compose.ui.theme.Dimens
 @Composable
 fun OtpScreen(
     modifier: Modifier = Modifier,
-    otpViewModel: OtpViewModel = viewModel(),
-    onNavigateBack: () -> Unit
+    otpViewModel: OtpViewModel = hiltViewModel(),
+    onNavigateBack: () -> Unit,
+    onNavigateToHome: () -> Unit
 ) {
-    val state by otpViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by otpViewModel.uiState.collectAsStateWithLifecycle()
     val digits by otpViewModel.digitList.collectAsStateWithLifecycle()
     val activeIndex by otpViewModel.activeIndex.collectAsStateWithLifecycle()
 
@@ -46,6 +48,12 @@ fun OtpScreen(
     val isLandScape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     val verticalGap = if (isLandScape) Dimens.SpacingTiny else Dimens.SpacingLarge
+
+    LaunchedEffect(uiState.isVerified) {
+        if (uiState.isVerified) {
+            onNavigateToHome()
+        }
+    }
 
     val otpFormContent = @Composable {
         Column(
@@ -84,6 +92,8 @@ fun OtpScreen(
             ) {
                 digits.forEachIndexed { index, digit ->
                     InputDigitBox(
+                        isSuccess = uiState.error != null,
+                        isError = uiState.isVerified,
                         number = digit,
                         isCursorVisible = index == activeIndex
                     )
@@ -98,9 +108,11 @@ fun OtpScreen(
 
             VerticalSpacer(verticalGap)
             PrimaryButton(
+                modifier = Modifier.fillMaxWidth(),
                 text = "Verify",
-                onClick = { },
-                modifier = Modifier.fillMaxWidth()
+                onClick = { otpViewModel.verifyOtp() },
+                enabled = uiState.isVerifyEnable,
+                isLoading = uiState.isLoading,
             )
         }
     }

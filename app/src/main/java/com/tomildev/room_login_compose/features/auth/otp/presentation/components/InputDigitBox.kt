@@ -27,21 +27,21 @@ import com.tomildev.room_login_compose.ui.theme.ExtendedTheme
 fun InputDigitBox(
     number: String,
     isCursorVisible: Boolean,
-    isOtpCorrect: Boolean = false,
-    isOtpInCorrect: Boolean = false
+    isSuccess: Boolean = false,
+    isError: Boolean = false
 ) {
     val shape = MaterialTheme.shapes.large
     val isNumber = number.isNotBlank()
     val borderColor = when {
-        isOtpCorrect && isNumber -> ExtendedTheme.colors.success
-        isOtpInCorrect && isNumber -> MaterialTheme.colorScheme.error
+        isSuccess && isNumber -> ExtendedTheme.colors.success
+        isError && isNumber -> MaterialTheme.colorScheme.error
         !isCursorVisible && isNumber -> Color.LightGray
         isCursorVisible -> Color.LightGray
         else -> MaterialTheme.colorScheme.outline
     }
     val borderWidth =
         when {
-            isOtpCorrect && isNumber || isOtpInCorrect && isNumber -> 1.dp
+            isSuccess && isNumber || isError && isNumber -> 1.dp
             isCursorVisible -> 2.dp
             else -> 1.dp
         }
@@ -59,8 +59,8 @@ fun InputDigitBox(
     ) {
 
         val numberColor = when {
-            isOtpCorrect -> ExtendedTheme.colors.success
-            isOtpInCorrect -> MaterialTheme.colorScheme.error
+            isSuccess -> ExtendedTheme.colors.success
+            isError -> MaterialTheme.colorScheme.error
             else -> Color.Unspecified
         }
 

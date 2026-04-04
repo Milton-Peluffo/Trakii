@@ -32,8 +32,8 @@ fun PrimaryButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
-            disabledContainerColor = MaterialTheme.colorScheme.primary,
-            disabledContentColor = MaterialTheme.colorScheme.onPrimary
+            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
         )
     ) {
         if (isLoading) {

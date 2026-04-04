@@ -38,7 +38,7 @@ fun RegisterScreen(
     modifier: Modifier = Modifier,
     registerViewmodel: RegisterViewmodel = hiltViewModel(),
     onNavigateToLogin: () -> Unit,
-    onNavigateToHome: (String) -> Unit
+    onNavigateToOtp: (String) -> Unit
 ) {
 
     val uiState by registerViewmodel.uiState.collectAsStateWithLifecycle()
@@ -47,19 +47,27 @@ fun RegisterScreen(
 
     LaunchedEffect(Unit) {
         registerViewmodel.uiEvents.collect { uiEvent ->
-            val (errorData, snackbarType) = when (uiEvent) {
-                is SignUpUiEvent.Error -> uiEvent.error to SnackbarType.Error
-                is SignUpUiEvent.Warning -> uiEvent.error to SnackbarType.Warning
+            when (uiEvent) {
+                is SignUpUiEvent.NavigateToOtp -> {
+                    onNavigateToOtp(uiEvent.email)
+                }
+
+                is SignUpUiEvent.Error, is SignUpUiEvent.Warning -> {
+                    val (errorData, snackbarType) = when (uiEvent) {
+                        is SignUpUiEvent.Error -> uiEvent.error to SnackbarType.Error
+                        is SignUpUiEvent.Warning -> uiEvent.error to SnackbarType.Warning
+                        else -> return@collect
+                    }
+
+                    val errorMessage = errorData.toUiText().asString(context)
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsCustom(
+                            message = errorMessage,
+                            type = snackbarType
+                        )
+                    )
+                }
             }
-
-            val errorMessage = errorData.toUiText().asString(context)
-
-            snackbarHostState.showSnackbar(
-                SnackbarVisualsCustom(
-                    message = errorMessage,
-                    type = snackbarType
-                )
-            )
         }
     }
 

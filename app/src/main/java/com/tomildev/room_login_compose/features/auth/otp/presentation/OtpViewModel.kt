@@ -1,19 +1,69 @@
 package com.tomildev.room_login_compose.features.auth.otp.presentation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomildev.room_login_compose.core.domain.util.Result
+import com.tomildev.room_login_compose.features.auth.signup.domain.SignUpRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class OtpViewModel() : ViewModel() {
+@HiltViewModel
+class OtpViewModel @Inject constructor(
+    private val signUpRepository: SignUpRepository,
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OtpUiState())
     val uiState: StateFlow<OtpUiState> = _uiState.asStateFlow()
+
+    private val _uiEvents = Channel<OtpUiEvent>()
+    val uiEvents = _uiEvents.receiveAsFlow()
+
+    init {
+        val emailArg = savedStateHandle.get<String>("email") ?: ""
+        _uiState.update { it.copy(email = emailArg) }
+    }
+
+    fun verifyOtp() {
+        val currentState = _uiState.value
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            val result = signUpRepository.verifyOtp(
+                email = currentState.email,
+                otp = currentState.code
+            )
+
+            _uiState.update { it.copy(isLoading = false) }
+
+            when (result) {
+                is Result.Error -> {
+                    _uiState.update { it.copy(error = result.error) }
+                }
+
+                is Result.Success -> {
+                    _uiState.update { it.copy(isVerifyEnable = true) }
+                }
+            }
+            if (result is Result.Success) {
+                _uiState.update { it.copy(isVerified = true) }
+                delay(2000)
+            }
+        }
+    }
 
     /**
      * A [StateFlow] representing the OTP code as a list of four individual strings.
