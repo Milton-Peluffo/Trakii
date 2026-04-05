@@ -34,18 +34,21 @@ class OtpViewModel @Inject constructor(
     private val _uiEvents = Channel<OtpUiEvent>()
     val uiEvents = _uiEvents.receiveAsFlow()
 
+
     private val navArgs = savedStateHandle.toRoute<NavRoute.Otp>()
     private val emailFromArgs = navArgs.email
 
     private var timerJob: Job? = null
 
     init {
-        _uiState.update { it.copy(email = emailFromArgs) }
+        _uiState.update {
+            it.copy(
+                email = emailFromArgs,
+                displayedEmail = maskEmail(emailFromArgs)
+            )
+        }
         startTimer()
     }
-
-    val displayedEmail: String
-        get() = maskEmail(_uiState.value.email)
 
     private fun maskEmail(email: String): String {
         val atIndex = email.indexOf('@')
@@ -79,14 +82,14 @@ class OtpViewModel @Inject constructor(
         val email = _uiState.value.email
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            _uiState.update { it.copy(isLoading = true, networkError = null) }
 
             val result = otpRepository.resentOtp(email)
             _uiState.update { it.copy(isLoading = false) }
 
             when (result) {
                 is Result.Error -> {
-                    _uiState.update { it.copy(error = result.error) }
+                    _uiState.update { it.copy(networkError = result.error) }
                 }
 
                 is Result.Success -> {
@@ -105,7 +108,7 @@ class OtpViewModel @Inject constructor(
         println("DEBUG_OTP: Código: '${currentState.code}'")
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            _uiState.update { it.copy(isLoading = true, networkError = null) }
 
             val result = otpRepository.verifyOtp(
                 email = currentState.email,
@@ -116,7 +119,7 @@ class OtpViewModel @Inject constructor(
 
             when (result) {
                 is Result.Error -> {
-                    _uiState.update { it.copy(error = result.error) }
+                    _uiState.update { it.copy(networkError = result.error) }
                 }
 
                 is Result.Success -> {
@@ -162,7 +165,7 @@ class OtpViewModel @Inject constructor(
         if (currentCode.length < 6) {
             val newCode = currentCode + number
             _uiState.update {
-                it.copy(code = newCode, error = null, isVerifyEnable = newCode.length == 6)
+                it.copy(code = newCode, networkError = null, isVerifyEnable = newCode.length == 6)
             }
         }
     }

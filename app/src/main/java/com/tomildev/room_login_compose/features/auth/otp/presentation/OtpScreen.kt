@@ -82,7 +82,7 @@ fun OtpScreen(
             )
             VerticalSpacer(verticalGap / 2)
             Texts.TitleMedium(
-                text = otpViewModel.displayedEmail,
+                text = uiState.displayedEmail,
                 textAlign = TextAlign.Center
             )
             VerticalSpacer(verticalGap)
@@ -92,7 +92,7 @@ fun OtpScreen(
             ) {
                 digits.forEachIndexed { index, digit ->
                     InputDigitBox(
-                        isError = uiState.error != null,
+                        isError = uiState.networkError != null,
                         isSuccess = uiState.isVerified,
                         number = digit,
                         isCursorVisible = index == activeIndex
