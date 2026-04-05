@@ -28,7 +28,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.tomildev.room_login_compose.R
 import com.tomildev.room_login_compose.core.common.presentation.components.buttons.PrimaryButton
 import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackBars
 import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackbarType
@@ -37,6 +36,7 @@ import com.tomildev.room_login_compose.core.common.presentation.components.space
 import com.tomildev.room_login_compose.core.common.presentation.components.spacers.VerticalSpacer
 import com.tomildev.room_login_compose.core.common.presentation.components.texts.Texts
 import com.tomildev.room_login_compose.core.common.presentation.mapper.toUiText
+import com.tomildev.room_login_compose.core.domain.model.error.DataError
 import com.tomildev.room_login_compose.features.auth.otp.presentation.components.CustomNumericKeyboard
 import com.tomildev.room_login_compose.features.auth.otp.presentation.components.InputDigitBox
 import com.tomildev.room_login_compose.features.settings.presentation.components.BackButton
@@ -92,7 +92,8 @@ fun OtpScreen(
                 OtpUiEvent.CodeResent -> {
                     snackbarHostState.showSnackbar(
                         SnackbarVisualsCustom(
-                            message = "",
+                            //Temporal
+                            message = "Code resent Successfully",
                             type = SnackbarType.Success
                         )
                     )
@@ -132,16 +133,22 @@ fun OtpScreen(
                 textAlign = TextAlign.Center
             )
             VerticalSpacer(verticalGap)
+
+            val hasNetworkError = uiState.networkError != null
+            val isInternetError = uiState.networkError == DataError.Network.NoInternet ||
+                    uiState.networkError == DataError.Network.Timeout
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 digits.forEachIndexed { index, digit ->
                     InputDigitBox(
-                        isError = uiState.networkError != null,
-                        isSuccess = uiState.isVerified,
                         number = digit,
-                        isCursorVisible = index == activeIndex
+                        isCursorVisible = index == activeIndex,
+                        isSuccess = uiState.isVerified,
+                        isError = hasNetworkError && !isInternetError,
+                        isWarning = hasNetworkError && isInternetError,
                     )
                 }
             }

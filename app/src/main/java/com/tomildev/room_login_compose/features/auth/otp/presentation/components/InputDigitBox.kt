@@ -28,13 +28,15 @@ fun InputDigitBox(
     number: String,
     isCursorVisible: Boolean,
     isSuccess: Boolean = false,
-    isError: Boolean = false
+    isError: Boolean = false,
+    isWarning: Boolean = false
 ) {
     val shape = MaterialTheme.shapes.large
     val isNumber = number.isNotBlank()
     val borderColor = when {
         isSuccess && isNumber -> ExtendedTheme.colors.success
         isError && isNumber -> MaterialTheme.colorScheme.error
+        isWarning && isNumber -> ExtendedTheme.colors.warning
         !isCursorVisible && isNumber -> Color.LightGray
         isCursorVisible -> Color.LightGray
         else -> MaterialTheme.colorScheme.outline
@@ -61,6 +63,7 @@ fun InputDigitBox(
         val numberColor = when {
             isSuccess -> ExtendedTheme.colors.success
             isError -> MaterialTheme.colorScheme.error
+            isWarning -> ExtendedTheme.colors.warning
             else -> Color.Unspecified
         }
 
