@@ -22,13 +22,13 @@ fun DataError.toUiText(): UiText {
     return when (this) {
         is DataError.Network -> {
             val redId = when (this) {
-                DataError.Network.ServiceUnavailable -> R.string.register_network_service_unavailable_error
+                DataError.Network.ServiceUnavailable -> R.string.error_network_service_unavailable_error
                 DataError.Network.InvalidCredentials -> R.string.login_network_invalid_credentials_error
                 DataError.Network.InvalidOtp -> R.string.otp_network_invalid_code_error
-                DataError.Network.Conflict -> R.string.register_network_email_already_exists_error
-                DataError.Network.NoInternet -> R.string.register_network_no_internet_error
-                DataError.Network.Timeout -> R.string.register_network_timeout_error
-                DataError.Network.Unknown -> R.string.register_network_unknown_error
+                DataError.Network.Conflict -> R.string.error_network_email_already_exists_error
+                DataError.Network.NoInternet -> R.string.error_network_no_internet_error
+                DataError.Network.Timeout -> R.string.error_network_timeout_error
+                DataError.Network.Unknown -> R.string.error_network_unknown_error
             }
             UiText.StringResource(redId)
         }

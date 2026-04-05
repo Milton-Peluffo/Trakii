@@ -9,9 +9,11 @@ data class SignUpUiState(
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",
-    //VALIDATORS
+
+    // STATES / VALIDATORS
     val showSuccessDialog: Boolean = false,
     val isLoading: Boolean = false,
+
     //ERRORS
     val networkError: DataError? = null,
     val errorMessage: String? = null,

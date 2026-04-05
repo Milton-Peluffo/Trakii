@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.tomildev.room_login_compose.core.domain.model.error.DataError
 import com.tomildev.room_login_compose.core.domain.util.Result
 import com.tomildev.room_login_compose.core.navigation.NavRoute
 import com.tomildev.room_login_compose.features.auth.otp.domain.OtpRepository
@@ -33,11 +34,8 @@ class OtpViewModel @Inject constructor(
 
     private val _uiEvents = Channel<OtpUiEvent>()
     val uiEvents = _uiEvents.receiveAsFlow()
-
-
     private val navArgs = savedStateHandle.toRoute<NavRoute.Otp>()
     private val emailFromArgs = navArgs.email
-
     private var timerJob: Job? = null
 
     init {
@@ -90,10 +88,28 @@ class OtpViewModel @Inject constructor(
             when (result) {
                 is Result.Error -> {
                     _uiState.update { it.copy(networkError = result.error) }
+
+                    when (result.error) {
+                        DataError.Network.NoInternet,
+                        DataError.Network.Timeout -> {
+                            _uiEvents.send(OtpUiEvent.Warning(result.error))
+                        }
+
+                        DataError.Network.InvalidOtp,
+                        DataError.Network.ServiceUnavailable -> {
+                            _uiEvents.send(OtpUiEvent.Error(result.error))
+                        }
+
+                        else -> {
+                            _uiEvents.send(OtpUiEvent.Error(DataError.Network.Unknown))
+                        }
+                    }
+
                 }
 
                 is Result.Success -> {
                     startTimer()
+                    _uiEvents.send(OtpUiEvent.CodeResent)
                 }
             }
         }
@@ -120,6 +136,22 @@ class OtpViewModel @Inject constructor(
             when (result) {
                 is Result.Error -> {
                     _uiState.update { it.copy(networkError = result.error) }
+
+                    when (result.error) {
+                        DataError.Network.NoInternet,
+                        DataError.Network.Timeout -> {
+                            _uiEvents.send(OtpUiEvent.Warning(result.error))
+                        }
+
+                        DataError.Network.ServiceUnavailable,
+                        DataError.Network.InvalidOtp -> {
+                            _uiEvents.send(OtpUiEvent.Error(result.error))
+                        }
+
+                        else -> {
+                            _uiEvents.send(OtpUiEvent.Error(DataError.Network.Unknown))
+                        }
+                    }
                 }
 
                 is Result.Success -> {

@@ -12,21 +12,31 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.tomildev.room_login_compose.R
 import com.tomildev.room_login_compose.core.common.presentation.components.buttons.PrimaryButton
+import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackBars
+import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackbarType
+import com.tomildev.room_login_compose.core.common.presentation.components.snackbars.SnackbarVisualsCustom
 import com.tomildev.room_login_compose.core.common.presentation.components.spacers.HorizontalSpacer
 import com.tomildev.room_login_compose.core.common.presentation.components.spacers.VerticalSpacer
 import com.tomildev.room_login_compose.core.common.presentation.components.texts.Texts
+import com.tomildev.room_login_compose.core.common.presentation.mapper.toUiText
 import com.tomildev.room_login_compose.features.auth.otp.presentation.components.CustomNumericKeyboard
 import com.tomildev.room_login_compose.features.auth.otp.presentation.components.InputDigitBox
 import com.tomildev.room_login_compose.features.settings.presentation.components.BackButton
@@ -49,9 +59,45 @@ fun OtpScreen(
 
     val verticalGap = if (isLandScape) Dimens.SpacingTiny else Dimens.SpacingLarge
 
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
     LaunchedEffect(uiState.isVerified) {
         if (uiState.isVerified) {
             onNavigateToHome()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        otpViewModel.uiEvents.collect { event ->
+            when (event) {
+                is OtpUiEvent.Error -> {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsCustom(
+                            message = event.error.toUiText().asString(context),
+                            type = SnackbarType.Error
+                        )
+                    )
+                }
+
+                is OtpUiEvent.Warning -> {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsCustom(
+                            message = event.error.toUiText().asString(context),
+                            type = SnackbarType.Warning
+                        )
+                    )
+                }
+
+                OtpUiEvent.CodeResent -> {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsCustom(
+                            message = "",
+                            type = SnackbarType.Success
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -136,7 +182,26 @@ fun OtpScreen(
         }
     }
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                modifier = Modifier.padding(vertical = 20.dp),
+                hostState = snackbarHostState
+            ) { data ->
+                val customVisuals = data.visuals as? SnackbarVisualsCustom
+                if (customVisuals != null) {
+                    when (customVisuals.type) {
+                        SnackbarType.Error -> SnackBars.Error(title = customVisuals.message) { data.dismiss() }
+                        SnackbarType.Warning -> SnackBars.Warning(title = customVisuals.message) { data.dismiss() }
+                        SnackbarType.Success -> SnackBars.Success(title = customVisuals.message) { data.dismiss() }
+                        else -> Snackbar(data)
+                    }
+                } else {
+                    Snackbar(data)
+                }
+            }
+        }
+    ) { innerPadding ->
         Box(
             modifier = modifier
                 .fillMaxSize()
